@@ -1,0 +1,36 @@
+{
+  "name": "react-accessible-headings",
+  "version": "0.0.1",
+  "description": "Dynamic <h1>, <h2>, etc heading levels... without causing accessibility problems!",
+  "main": "./build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "yarn build",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/springload/react-accessible-headings/"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "react",
+    "heading",
+    "level",
+    "h1"
+  ],
+  "author": "Matthew Holloway",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^16.9.19",
+    "jest": "25.1.0",
+    "react": "^16.8",
+    "react-dom": "^16.8",
+    "typescript": "^3.6.4"
+  },
+  "peerDependencies": {
+    "react": ">16.8",
+    "react-dom": ">16.8"
+  }
+}
