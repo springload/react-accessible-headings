@@ -10,7 +10,7 @@ However developers often hardcode specific heading levels into their components,
 
 By using `react-accessible-headings` you can have components with flexible headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
-Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily without having to know the correct heading levels. See the <a href="#examples-toc">Examples</a> section for an indepth analysis about the pros and cons of this approach.
+Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily without having to know the correct heading level numbers. See the <a href="#examples-toc">Examples</a> section for an indepth analysis about the pros and cons of this approach.
 
 This library is less than 1 kilobyte (minified and compressed).
 
