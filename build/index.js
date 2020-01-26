@@ -10,25 +10,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 exports.LevelContext = react_1.default.createContext(1);
 function Level(props) {
-    const { children } = props;
-    const level = react_1.useContext(exports.LevelContext);
-    const newLevel = level !== undefined ? level + 1 : 2;
-    // assertValidLevel(newLevel); // Harmless to increase depth beyond
+    const { children, depth: levelOverride } = props;
+    const contextLevel = react_1.useContext(exports.LevelContext);
+    const newLevel = levelOverride !== undefined
+        ? levelOverride
+        : contextLevel !== undefined
+            ? contextLevel + 1
+            : 2;
     return (react_1.default.createElement(exports.LevelContext.Provider, { value: newLevel }, children));
 }
 exports.Level = Level;
+const MAXIMUM_LEVEL = 6;
 function H(props) {
-    const { children, offset } = props;
+    const { children, offset, ...otherProps } = props;
     const level = react_1.useContext(exports.LevelContext);
-    const newLevel = (level !== undefined ? level : 1) + offset !== undefined ? offset : 0;
-    assertValidLevel(newLevel);
-    return react_1.default.createElement(`h${level === undefined ? 1 : level}`, null, children);
+    const newLevel = (level !== undefined ? level : 1) + (offset !== undefined ? offset : 0);
+    if (newLevel > MAXIMUM_LEVEL) {
+        throw Error(`Heading level "${newLevel}" exceeds maximum level of ${MAXIMUM_LEVEL}.`);
+    }
+    return react_1.default.createElement(`h${newLevel}`, otherProps, children);
 }
 exports.H = H;
-const assertValidLevel = (level) => {
-    if (level > MAXIMUM_LEVEL) {
-        throw Error(`Heading level "${level}" exceeds maximum level of ${MAXIMUM_LEVEL}.`);
-    }
-};
-const MAXIMUM_LEVEL = 6;
 //# sourceMappingURL=index.js.map

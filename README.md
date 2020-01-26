@@ -60,9 +60,9 @@ TypeScript is available.
 
 ### `Level` component
 
-Props: _None_ except `children`.
+Props: `depth`: _(Optional)_ a **number** to override the level. There are no other props.
 
-This component doesn't render any HTML.
+This component doesn't render any HTML except `children`.
 
 ### `H` component
 
@@ -92,9 +92,17 @@ or,
 <H offset={2}>this will be a heading 3</H>
 ```
 
-However testing in [Axe](https://www.deque.com/axe/) will reveal such accessibility problems.
+or,
 
-It's possible that in the future we may add this feature so please get in touch (by creating a Github issue) if you'd like to use this.
+```jsx
+<Level depth={3}>
+  <H>this will be a heading 3</H>
+</Level>
+```
+
+If that `h3` wasn't preceded by `h1` and `h2` then that's an accessibility problem. Testing in [Axe](https://www.deque.com/axe/) will reveal this..
+
+It's unlikely that we will introduce a runtime check for heading levels as Axe already does this. Because webpages could have a static HTML `h1` with React apps rendering `h2`s then any check would have to analyse the whole DOM and have nothing to do with React or this component, so if it was written it would be a separate standalone package, but replicating Axe functionality would probably be pointless.
 
 ## Further reading
 
