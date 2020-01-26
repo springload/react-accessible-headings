@@ -67,7 +67,7 @@ While this library facilitates dynamic heading levels it doesn't detect skipped 
 <Level>
   <Level>
     <Level>
-      <H>this will be a heading 3</H>
+      <H>this will be a heading 4. Levels 2 and 3 were skipped!</H>
     </Level>
   </Level>
 </Level>
