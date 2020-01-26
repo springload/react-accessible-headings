@@ -6,11 +6,11 @@
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-However developers often hardcode specific heading levels into their components, limiting their flexibility and making it harder to adhere to consistant heading levels.
+However developers often hardcode specific heading levels into their components, limiting their flexibility and making it harder to adhere to semantic heading levels.
 
-By using `react-accessible-headings` you can have components with dynamic headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
+By using `react-accessible-headings` you can have components with flexible headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
-Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#Examples">Examples</a> section for ideas on how this can be done.
+Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#Examples">Examples</a> section for an indepth analysis about the pros and cons of this approach.
 
 This library is less than 1 kilobyte (minified and compressed).
 
@@ -31,6 +31,7 @@ export default function() {
           <H>a Heading 3</H>
         </Level>
         <H>yet another Heading 2</H>
+        <H offset={1}>yet another Heading 3</H>
       </Level>
     </div>
   );
@@ -41,13 +42,13 @@ export default function() {
 
 All APIs have TypeScript types available.
 
-### `Level` component
+### `<Level>` component
 
 Props: `value`: _(Optional)_ a **number** to override the level. An exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. There are no other props, except `children`.
 
 This component doesn't render any HTML except `children`.
 
-### `H` component
+### `<H>` component
 
 Props: `offset`: _(Optional)_ a **number** to offset the heading level (see _Examples: The 'Offset' Example_ for more). All other valid props for an heading are also accepted.
 
@@ -72,7 +73,7 @@ While this library facilitates dynamic heading levels it doesn't detect skipped 
 </Level>
 ```
 
-Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so a run-time check was added this would be a separate standalone package, but replicating Axe functionality would probably be pointless.
+Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so if a run-time check was added this would be a separate project, but replicating this Axe functionality would probably be pointless.
 
 ## Further reading
 
@@ -149,7 +150,7 @@ export function Card({ children }) {
 }
 ```
 
-but now the parent component needs to know about the `"card__heading"` class and the implementation details of `<Card>` are leaking; there's less encapsulation.
+but now the parent component needs to know about the `"card__heading"` class and the implementation details of `<Card>` are leaking; there's less encapsulation...
 
 ```jsx
 // usage
@@ -192,7 +193,7 @@ export function Card({ children, heading }) {
 </Level>
 ```
 
-And then consider if there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all.
+And then consider if there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
 
 ```jsx
 <Level>
@@ -213,6 +214,8 @@ And then consider if there's an <abbr title="information architecture">IA</abbr>
 
 So it's an alternative composition technique that may make it easier to refactor code.
 
+That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept.
+
 ### The 'Level Query' Example
 
 If you want to programatically query the current level you can,
@@ -231,7 +234,7 @@ return (
 
 ### The 'Offset' Example
 
-If you want to have heading levels dynamic yet related to one another you can provide an `offset` prop
+If you want to have heading levels dynamic yet related to one another you can provide an `offset` prop.
 
 ```jsx
 <div className="card">
