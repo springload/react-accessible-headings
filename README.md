@@ -6,13 +6,13 @@
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-However developers often hardcode specific heading levels into their components, limiting their flexibility.
+However developers often hardcode specific heading levels into their components, limiting their flexibility and making it harder to adhere to consistant heading levels.
 
 By using `react-accessible-headings` you can have components with dynamic headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
 Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#Examples">Examples</a> section for ideas on how this can be done.
 
-This library is less than 1 kilobyte (minified and compressed) and comes with TypeScript types.
+This library is less than 1 kilobyte (minified and compressed).
 
 ## Usage
 
