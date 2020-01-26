@@ -52,39 +52,6 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
 
 If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more). An exception will be thrown if useLevel resolves to an invalid heading level.
 
-## Limitations
-
-While this library facilitates dynamic heading levels it doesn't detect skipped heading levels through incorrect usage such as,
-
-```jsx
-<h1>Heading 1</h1>
-<Level>
-  <Level>
-    <Level>
-      <H>this will be a heading 4. Levels 2 and 3 were skipped!</H>
-    </Level>
-  </Level>
-</Level>
-```
-
-Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so if a run-time check was added this would be a separate project, but replicating this Axe functionality would probably be pointless.
-
-## Further reading
-
-### Prior art
-
-[DocBook](https://docbook.org/), the ill-fated [XHTML 2](https://www.w3.org/TR/xhtml2/mod-structural.html#sec_8.5.), and [HTML5's abandoned 'outline'](http://blog.paciellogroup.com/2013/10/html5-document-outline/) had a very similar idea. Also check out the 2014 project [html5-h](https://github.com/ThePacielloGroup/html5-h).
-
-### References
-
-#### [WCAG 2: G141: Organizing a page using headings](https://www.w3.org/TR/2012/NOTE-WCAG20-TECHS-20120103/G141),
-
-> To facilitate navigation and understanding of overall document structure, authors should use headings that are properly nested (e.g., h1 followed by h2, h2 followed by h2 or h3, h3 followed by h3 or h4, etc.).
-
-#### [Axe: Heading levels should only increase by one](https://dequeuniversity.com/rules/axe/3.4/heading-order)
-
-> Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.
-
 ## Examples <a name="examples-toc"></a>
 
 ### The 'Card' Example <a name="examples-card"></a>
@@ -265,3 +232,36 @@ which is a more concise way of writing this,
 ```
 
 However `<Level>` will establish a new deeper _level_ whereas `offset` will not.
+
+## Limitations
+
+While this library facilitates dynamic heading levels it doesn't detect skipped heading levels through incorrect usage such as,
+
+```jsx
+<h1>Heading 1</h1>
+<Level>
+  <Level>
+    <Level>
+      <H>this will be a heading 4. Levels 2 and 3 were skipped!</H>
+    </Level>
+  </Level>
+</Level>
+```
+
+Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so if a run-time check was added this would be a separate project, but replicating this Axe functionality would probably be pointless.
+
+## Further reading
+
+### Prior art
+
+[DocBook](https://docbook.org/), the ill-fated [XHTML 2](https://www.w3.org/TR/xhtml2/mod-structural.html#sec_8.5.), and [HTML5's abandoned 'outline'](http://blog.paciellogroup.com/2013/10/html5-document-outline/) had a very similar idea. Also check out the 2014 project [html5-h](https://github.com/ThePacielloGroup/html5-h).
+
+### References
+
+#### [WCAG 2: G141: Organizing a page using headings](https://www.w3.org/TR/2012/NOTE-WCAG20-TECHS-20120103/G141),
+
+> To facilitate navigation and understanding of overall document structure, authors should use headings that are properly nested (e.g., h1 followed by h2, h2 followed by h2 or h3, h3 followed by h3 or h4, etc.).
+
+#### [Axe: Heading levels should only increase by one](https://dequeuniversity.com/rules/axe/3.4/heading-order)
+
+> Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.

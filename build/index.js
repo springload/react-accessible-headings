@@ -13,7 +13,7 @@ function Level(props) {
     const { children, value: levelOverride } = props;
     const contextLevel = react_1.useContext(exports.LevelContext);
     const newLevel = levelOverride !== undefined
-        ? levelOverride
+        ? parseInt(levelOverride.toString(), 10)
         : contextLevel !== undefined
             ? contextLevel + 1
             : 2;
@@ -25,7 +25,8 @@ const MAXIMUM_LEVEL = 6;
 function H(props) {
     const { children, offset, ...otherProps } = props;
     const level = react_1.useContext(exports.LevelContext);
-    const newLevel = (level !== undefined ? level : 1) + (offset !== undefined ? offset : 0);
+    const newLevel = (level !== undefined ? level : 1) +
+        (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
     assertLevelRange(newLevel);
     return react_1.default.createElement(`h${newLevel}`, otherProps, children);
 }

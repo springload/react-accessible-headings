@@ -39,7 +39,8 @@ export function H(props: HeadingProps) {
   const { children, offset, ...otherProps } = props;
   const level = useContext(LevelContext);
   const newLevel =
-    (level !== undefined ? level : 1) + (offset !== undefined ? offset : 0);
+    (level !== undefined ? level : 1) +
+    (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
   assertLevelRange(newLevel);
   return React.createElement(`h${newLevel}`, otherProps, children);
 }
