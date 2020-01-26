@@ -55,5 +55,6 @@ function assertLevelRange(level: number): void {
 export function useLevel(): number {
   const level = useContext(LevelContext);
   const newLevel = level !== undefined ? level : 1;
+  assertLevelRange(newLevel);
   return newLevel;
 }

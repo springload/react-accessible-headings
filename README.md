@@ -10,7 +10,7 @@ However developers often hardcode specific heading levels into their components,
 
 By using `react-accessible-headings` you can have components with flexible headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
-Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#examplestoc">Examples</a> section for an indepth analysis about the pros and cons of this approach.
+Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily without having to know the correct heading levels. See the <a href="#examples-toc">Examples</a> section for an indepth analysis about the pros and cons of this approach.
 
 This library is less than 1 kilobyte (minified and compressed).
 
@@ -50,7 +50,7 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
 
 ### `useLevel`
 
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more)
+If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more). An exception will be thrown if useLevel resolves to an invalid heading level.
 
 ## Limitations
 
@@ -85,7 +85,7 @@ Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlike
 
 > Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.
 
-## Examples <a name="examplestoc"></a>
+## Examples <a name="examples-toc"></a>
 
 ### The 'Card' Example <a name="examples-card"></a>
 
@@ -135,6 +135,8 @@ export function Card({ children, heading, headingLevel }) {
   );
 }
 ```
+
+and now the parent component needs to know the `headingLevel` number, so it's an abstract way of making an `h2` or `h3`
 
 Or, perhaps you'd use `children`,
 
@@ -187,7 +189,7 @@ export function Card({ children, heading }) {
 </Level>
 ```
 
-And then consider if there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
+And then imagine that there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
 
 ```jsx
 <Level>
@@ -206,9 +208,9 @@ And then consider if there's an <abbr title="information architecture">IA</abbr>
 </Level>
 ```
 
-So it's an alternative composition technique for page headings that may make it easier to refactor and reuse code.
+So it's an alternative composition technique for page headings that may make it easier to refactor and reuse code. The `<Level>` concept means you only need to think about whether it's a deeper level, without having to know the specific heading level number.
 
-That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept.
+That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept. It may not be appropriate for some codebases.
 
 ### The 'useLevel query' Example <a name="examples-uselevel"></a>
 
