@@ -38,6 +38,7 @@ function assertLevelRange(level) {
 function useLevel() {
     const level = react_1.useContext(exports.LevelContext);
     const newLevel = level !== undefined ? level : 1;
+    assertLevelRange(newLevel);
     return newLevel;
 }
 exports.useLevel = useLevel;
