@@ -35,4 +35,10 @@ function assertLevelRange(level) {
         throw Error(`Heading level "${level}" not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`);
     }
 }
+function useLevel() {
+    const level = react_1.useContext(exports.LevelContext);
+    const newLevel = level !== undefined ? level : 1;
+    return newLevel;
+}
+exports.useLevel = useLevel;
 //# sourceMappingURL=index.js.map

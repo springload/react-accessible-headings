@@ -223,7 +223,7 @@ If you want to programatically query the current level you can,
 ```jsx
 import { useLevel, H } from "react-accessible-headings";
 
-const level = useLevel(); // level is an integer
+const level = useLevel(); // level is a number (integer) from 1-6
 
 return (
   <div className={`heading--${level}`}>

@@ -267,4 +267,5 @@ export declare function H(props: HeadingProps): React.DOMElement<{
     onTransitionEnd?: (event: React.TransitionEvent<HTMLHeadingElement>) => void;
     onTransitionEndCapture?: (event: React.TransitionEvent<HTMLHeadingElement>) => void;
 }, HTMLHeadingElement>;
+export declare function useLevel(): number;
 export {};
