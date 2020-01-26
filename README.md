@@ -136,7 +136,7 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-and now the parent component needs to know the `headingLevel` number, so it's an abstract way of making an `h2` or `h3`
+and now the parent component needs to know the `headingLevel` number, so it's a confusing indirect way of making an `h2` or `h3`
 
 Or, perhaps you'd use `children`,
 
@@ -244,3 +244,24 @@ If you want to have heading levels dynamic yet related to one another you can pr
   {children}
 </div>
 ```
+
+which is a more concise way of writing this,
+
+```jsx
+<div className="card">
+  <H className="card__heading">This will be the current heading level</H>
+  <Level>
+    <H className="card__sub-heading">This will be one level deeper</H>
+  </Level>
+  <Level>
+    <Level>
+      <H className="card__sub-sub-heading">
+        This will be two levels deeper. I don't know why you'd want this!
+      </H>
+    </Level>
+  </Level>
+  {children}
+</div>
+```
+
+However `<Level>` will establish a new deeper _level_ whereas `offset` will not.

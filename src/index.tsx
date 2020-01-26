@@ -19,7 +19,7 @@ export function Level(props: HeadingLevelProps) {
   const contextLevel = useContext(LevelContext);
   const newLevel =
     levelOverride !== undefined
-      ? levelOverride
+      ? parseInt(levelOverride.toString(), 10)
       : contextLevel !== undefined
       ? contextLevel + 1
       : 2;
