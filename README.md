@@ -4,13 +4,15 @@
 
 [WCAG WAI says](https://www.w3.org/WAI/tutorials/page-structure/headings/),
 
-> skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
+> Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
 However developers often hardcode specific heading levels into their components, limiting their flexibility.
 
 By using `react-accessible-headings` you can have components with dynamic headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
-This library is less than 1 kilobyte (minified and compressed).
+Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#Examples">Examples</a> section for ideas on how this can be done.
+
+This library is less than 1 kilobyte (minified and compressed) and comes with TypeScript types.
 
 ## Usage
 
@@ -54,13 +56,13 @@ export default function() {
 }
 ```
 
-## Exports
+## API
 
-TypeScript is available.
+All APIs have TypeScript types available.
 
 ### `Level` component
 
-Props: `depth`: _(Optional)_ a **number** to override the level. There are no other props.
+Props: `value`: _(Optional)_ a **number** to override the level. There are no other props, except `children`.
 
 This component doesn't render any HTML except `children`.
 
@@ -79,36 +81,23 @@ If for some reason you'd like to inspect the current `level` value then `useCont
 While this library facilitates dynamic heading levels it doesn't detect skipped heading levels through incorrect usage such as,
 
 ```jsx
+<h1>Heading 1</h1>
 <Level>
   <Level>
-    <H>this will be a heading 3</H>
+    <Level>
+      <H>this will be a heading 3</H>
+    </Level>
   </Level>
 </Level>
 ```
 
-or,
-
-```jsx
-<H offset={2}>this will be a heading 3</H>
-```
-
-or,
-
-```jsx
-<Level depth={3}>
-  <H>this will be a heading 3</H>
-</Level>
-```
-
-If that `h3` wasn't preceded by `h1` and `h2` then that's an accessibility problem. Testing in [Axe](https://www.deque.com/axe/) will reveal this..
-
-It's unlikely that we will introduce a runtime check for heading levels as Axe already does this. Because webpages could have a static HTML `h1` with React apps rendering `h2`s then any check would have to analyse the whole DOM and have nothing to do with React or this component, so if it was written it would be a separate standalone package, but replicating Axe functionality would probably be pointless.
+Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so a run-time check was added this would be a separate standalone package, but replicating Axe functionality would probably be pointless.
 
 ## Further reading
 
 ### Prior art
 
-[DocBook](https://docbook.org/), the ill-fated [XHTML 2](https://www.w3.org/TR/xhtml2/mod-structural.html#sec_8.5.), and [HTML5's abandoned 'outline'](http://blog.paciellogroup.com/2013/10/html5-document-outline/) had a similar idea. Also check out the 2014 project [html5-h](https://github.com/ThePacielloGroup/html5-h).
+[DocBook](https://docbook.org/), the ill-fated [XHTML 2](https://www.w3.org/TR/xhtml2/mod-structural.html#sec_8.5.), and [HTML5's abandoned 'outline'](http://blog.paciellogroup.com/2013/10/html5-document-outline/) had a very similar idea. Also check out the 2014 project [html5-h](https://github.com/ThePacielloGroup/html5-h).
 
 ### References
 
@@ -119,3 +108,143 @@ It's unlikely that we will introduce a runtime check for heading levels as Axe a
 #### [Axe: Heading levels should only increase by one](https://dequeuniversity.com/rules/axe/3.4/heading-order)
 
 > Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.
+
+## Examples
+
+### The 'Card' Example
+
+Consider a 'card' component that might be coded as,
+
+```jsx
+export function Card({ children, heading }) {
+  return (
+    <div className="card">
+      <h3 className="card__heading">{heading}</h3>
+      {children}
+    </div>
+  );
+}
+```
+
+But then you want to reuse that card in two places with two different heading levels, so you might refactor the code like,
+
+```jsx
+export function Card({ children, heading, headingLevel }) {
+  return (
+    <div className="card">
+      {headingLevel === 2 ? (
+        <h2 className="card__heading">{heading}</h2>
+      ) : headingLevel === 3 ? (
+        <h3 className="card__heading">{heading}</h3>
+      ) : null}
+      {children}
+    </div>
+  );
+}
+```
+
+or
+
+```jsx
+export function Card({ children, heading, headingLevel }) {
+  return (
+    <div className="card">
+      {React.createElement(
+        "h" + headingLevel,
+        { className: "card__heading" },
+        heading
+      )}
+      {children}
+    </div>
+  );
+}
+```
+
+or perhaps you'd use `children`,
+
+```jsx
+export function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+```
+
+but now the parent component needs to know about the `"card__heading"` class and the implementation details of `<Card>` are leaking; there's less encapsulation.
+
+```jsx
+// usage
+<h1>Cards</h1>
+<Card>
+  <h2 className="card__heading">text</h2>
+  <p>body</p>
+</Card>
+<h2>See also</h2>
+<Card>
+  <h3 className="card__heading">text</h3>
+  <p>body</p>
+</Card>
+```
+
+Alternatively, with `react-accessible-headings` the implementation details of `<Card>` can stay encapsulated and look like,
+
+```jsx
+export function Card({ children, heading }) {
+  return (
+    <div className="card">
+      <H className="card__heading">{heading}</H>
+      {children}
+    </div>
+  );
+}
+
+// usage
+<H>Cards</H>
+<Level>
+  <Card heading="text">
+    <p>body</p>
+  </Card>
+  <H>See also</H>
+  <Level>
+    <Card heading="text">
+      <p>body</p>
+    </Card>
+  </Level>
+</Level>
+```
+
+And then consider if there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all.
+
+```jsx
+<Level>
+  <H>Cards</H>
+  <Level>
+    <Card heading="text">
+      <p>body</p>
+    </Card>
+    <H>See also</H>
+    <Level>
+      <Card heading="text">
+        <p>body</p>
+      </Card>
+    </Level>
+  </Level>
+</Level>
+```
+
+So it's an alternative composition technique that may make it easier to refactor code.
+
+### The 'Level Query' Example
+
+If you want to programatically query the current level you can,
+
+```jsx
+import { LevelContext, H } from "react-accessible-headings";
+
+const level = useContext(LevelContext);
+// level is an integer
+
+return (
+  <div className={`heading--${level}`}>
+    <H>text</H>
+  </div>
+);
+```

@@ -10,12 +10,12 @@ type LevelContextProps = number;
 export const LevelContext = React.createContext<LevelContextProps>(1);
 
 type HeadingLevelProps = {
-  depth?: number;
+  value?: number;
   children: ReactNode;
 };
 
 export function Level(props: HeadingLevelProps) {
-  const { children, depth: levelOverride } = props;
+  const { children, value: levelOverride } = props;
   const contextLevel = useContext(LevelContext);
   const newLevel =
     levelOverride !== undefined
@@ -23,6 +23,7 @@ export function Level(props: HeadingLevelProps) {
       : contextLevel !== undefined
       ? contextLevel + 1
       : 2;
+  assertLevelRange(newLevel);
   return (
     <LevelContext.Provider value={newLevel}>{children}</LevelContext.Provider>
   );
@@ -39,10 +40,14 @@ export function H(props: HeadingProps) {
   const level = useContext(LevelContext);
   const newLevel =
     (level !== undefined ? level : 1) + (offset !== undefined ? offset : 0);
-  if (newLevel > MAXIMUM_LEVEL) {
+  assertLevelRange(newLevel);
+  return React.createElement(`h${newLevel}`, otherProps, children);
+}
+
+function assertLevelRange(level: number) {
+  if (level <= 0 || level > MAXIMUM_LEVEL) {
     throw Error(
-      `Heading level "${newLevel}" exceeds maximum level of ${MAXIMUM_LEVEL}.`
+      `Heading level "${level}" not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`
     );
   }
-  return React.createElement(`h${newLevel}`, otherProps, children);
 }
