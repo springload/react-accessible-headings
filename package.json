@@ -1,6 +1,6 @@
 {
   "name": "react-accessible-headings",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dynamic <h1>, <h2>, etc heading levels... without causing accessibility problems!",
   "main": "./build/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "keywords": [
     "accessibility",
     "a11y",
+    "wcag",
     "react",
     "heading",
     "level",

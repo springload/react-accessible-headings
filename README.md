@@ -37,40 +37,21 @@ export default function() {
 }
 ```
 
-### Usage with `offset`
-
-```jsx
-import React from "react";
-import { Level, H } from "react-accessible-headings";
-
-export default function() {
-  return (
-    <div>
-      <H>This will be a heading 1</H>
-      <Level>
-        <H>This will be a heading 2</H>
-        <H offset={1}>This will be a heading 3</H>
-      </Level>
-    </div>
-  );
-}
-```
-
 ## API
 
 All APIs have TypeScript types available.
 
 ### `Level` component
 
-Props: `value`: _(Optional)_ a **number** to override the level. There are no other props, except `children`.
+Props: `value`: _(Optional)_ a **number** to override the level. An exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. There are no other props, except `children`.
 
 This component doesn't render any HTML except `children`.
 
 ### `H` component
 
-Props: `offset`: _(Optional)_ a **number** to offset the heading level. All other valid props for an heading are also accepted.
+Props: `offset`: _(Optional)_ a **number** to offset the heading level (see _Examples: The 'Offset' Example_ for more). All other valid props for an heading are also accepted.
 
-This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>` or greater.
+This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
 
 ### `LevelContext` context
 
@@ -239,12 +220,28 @@ If you want to programatically query the current level you can,
 ```jsx
 import { LevelContext, H } from "react-accessible-headings";
 
-const level = useContext(LevelContext);
-// level is an integer
+const level = useContext(LevelContext); // level is an integer
 
 return (
   <div className={`heading--${level}`}>
     <H>text</H>
   </div>
 );
+```
+
+### The 'Offset' Example
+
+If you want to have heading levels dynamic yet related to one another you can provide an `offset` prop
+
+```jsx
+<div className="card">
+  <H className="card__heading">This will be the current heading level</H>
+  <H offset={1} className="card__sub-heading">
+    This will be one level deeper
+  </H>
+  <H offset={2} className="card__sub-sub-heading">
+    This will be two levels deeper. I don't know why you'd want this!
+  </H>
+  {children}
+</div>
 ```
