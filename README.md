@@ -54,9 +54,9 @@ Props: `offset`: _(Optional)_ a **number** to offset the heading level (see _Exa
 
 This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
 
-### `LevelContext` context
+### `useLevel`
 
-If for some reason you'd like to inspect the current `level` value then `useContext(LevelContext)`.
+If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6.
 
 ## Limitations
 
@@ -212,18 +212,18 @@ And then consider if there's an <abbr title="information architecture">IA</abbr>
 </Level>
 ```
 
-So it's an alternative composition technique that may make it easier to refactor code.
+So it's an alternative composition technique for page headings that may make it easier to refactor and reuse code.
 
 That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept.
 
-### The 'Level Query' Example
+### The 'useLevel query' Example
 
 If you want to programatically query the current level you can,
 
 ```jsx
-import { LevelContext, H } from "react-accessible-headings";
+import { useLevel, H } from "react-accessible-headings";
 
-const level = useContext(LevelContext); // level is an integer
+const level = useLevel(); // level is an integer
 
 return (
   <div className={`heading--${level}`}>

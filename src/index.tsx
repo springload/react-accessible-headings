@@ -44,10 +44,16 @@ export function H(props: HeadingProps) {
   return React.createElement(`h${newLevel}`, otherProps, children);
 }
 
-function assertLevelRange(level: number) {
+function assertLevelRange(level: number): void {
   if (level <= 0 || level > MAXIMUM_LEVEL) {
     throw Error(
       `Heading level "${level}" not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`
     );
   }
+}
+
+export function useLevel(): number {
+  const level = useContext(LevelContext);
+  const newLevel = level !== undefined ? level : 1;
+  return newLevel;
 }
