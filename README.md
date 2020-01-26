@@ -10,7 +10,7 @@ However developers often hardcode specific heading levels into their components,
 
 By using `react-accessible-headings` you can have components with flexible headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
-Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#Examples">Examples</a> section for an indepth analysis about the pros and cons of this approach.
+Could you avoid this library and perhaps make component props that set the heading level, or use `children` in each instance so that the heading level is correct? Sure, but this is an alternative approach that makes it easier to refactor and 'indent' heading levels arbitrarily. See the <a href="#examplestoc">Examples</a> section for an indepth analysis about the pros and cons of this approach.
 
 This library is less than 1 kilobyte (minified and compressed).
 
@@ -50,13 +50,13 @@ This component doesn't render any HTML except `children`.
 
 ### `<H>` component
 
-Props: `offset`: _(Optional)_ a **number** to offset the heading level (see _Examples: The 'Offset' Example_ for more). All other valid props for an heading are also accepted.
+Props: `offset`: _(Optional)_ a **number** to offset the heading level (see <a href="#examples-offset">_Examples: The 'Offset' Example_</a> for more). All other valid props for an heading are also accepted.
 
 This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
 
 ### `useLevel`
 
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6.
+If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more)
 
 ## Limitations
 
@@ -91,9 +91,9 @@ Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlike
 
 > Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.
 
-## Examples
+## Examples <a name="examplestoc"></a>
 
-### The 'Card' Example
+### The 'Card' Example <a name="examples-card"></a>
 
 Consider a 'card' component that might be coded as,
 
@@ -216,7 +216,7 @@ So it's an alternative composition technique for page headings that may make it 
 
 That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept.
 
-### The 'useLevel query' Example
+### The 'useLevel query' Example <a name="examples-uselevel"></a>
 
 If you want to programatically query the current level you can,
 
@@ -232,7 +232,7 @@ return (
 );
 ```
 
-### The 'Offset' Example
+### The 'Offset' Example <a name="examples-offset"></a>
 
 If you want to have heading levels dynamic yet related to one another you can provide an `offset` prop.
 
