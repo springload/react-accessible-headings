@@ -1,7 +1,7 @@
 import React, { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
 export declare const LevelContext: React.Context<number>;
 declare type HeadingLevelProps = {
-    depth?: number;
+    value?: number;
     children: ReactNode;
 };
 export declare function Level(props: HeadingLevelProps): JSX.Element;
