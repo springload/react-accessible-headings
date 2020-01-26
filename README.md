@@ -26,12 +26,6 @@ export default function() {
       <H>This will be a heading 1</H>
       <Level>
         <H>and this a Heading 2</H>
-        <H>another Heading 2</H>
-        <Level>
-          <H>a Heading 3</H>
-        </Level>
-        <H>yet another Heading 2</H>
-        <H offset={1}>yet another Heading 3</H>
       </Level>
     </div>
   );
@@ -142,7 +136,7 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-or perhaps you'd use `children`,
+Or, perhaps you'd use `children`,
 
 ```jsx
 export function Card({ children }) {
