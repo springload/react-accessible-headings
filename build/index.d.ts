@@ -53,7 +53,7 @@ export declare function H(props: HeadingProps): React.DOMElement<{
     results?: number;
     security?: string;
     unselectable?: "on" | "off";
-    inputMode?: "search" | "none" | "text" | "numeric" | "tel" | "url" | "email" | "decimal";
+    inputMode?: "search" | "none" | "text" | "decimal" | "numeric" | "tel" | "url" | "email";
     is?: string;
     'aria-activedescendant'?: string;
     'aria-atomic'?: boolean | "false" | "true";

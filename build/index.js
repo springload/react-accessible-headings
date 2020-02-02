@@ -33,7 +33,13 @@ function H(props) {
 exports.H = H;
 function assertLevelRange(level) {
     if (level <= 0 || level > MAXIMUM_LEVEL) {
-        throw Error(`Heading level "${level}" not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`);
+        const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`;
+        if (process && process.env && process.env.NODE_ENV === "development") {
+            throw Error(errorMessage);
+        }
+        else {
+            console.error(errorMessage);
+        }
     }
 }
 function useLevel() {

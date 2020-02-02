@@ -36,29 +36,31 @@ export default function() {
 
 ### The 'Card' Example <a name="examples-card"></a>
 
-Consider a 'Card' component that might be coded as,
+Imagine you have a hypothetical 'Card' component that is coded as,
 
 ```jsx
 export function Card({ children, heading }) {
   return (
     <div className="card">
-      <h3 className="card__heading">{heading}</h3>
+      <h1 className="card__heading">{heading}</h1>
       {children}
     </div>
   );
 }
 ```
 
-But then you want to reuse that card in two places with two different heading levels, so you might refactor the code like,
+But then you want to make the `<h1>` configurable to make it either an `<h1>` or an `<h2>`. The card will be used in two places with two different heading levels.
+
+So you might refactor the code to support that feature like this,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
   return (
     <div className="card">
-      {headingLevel === 2 ? (
+      {headingLevel === 1 ? (
+        <h1 className="card__heading">{heading}</h1>
+      ) : headingLevel === 2 ? (
         <h2 className="card__heading">{heading}</h2>
-      ) : headingLevel === 3 ? (
-        <h3 className="card__heading">{heading}</h3>
       ) : null}
       {children}
     </div>
@@ -66,7 +68,7 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-or
+or,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
@@ -83,7 +85,7 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-and now the parent component needs to know the `headingLevel` number, so it's a confusing indirect way of making an `h2` or `h3`
+...and now the parent component needs to set the `headingLevel` number, a confusingly indirect way of making an `h1` or `h2`.
 
 Or, perhaps you'd use `children`,
 
@@ -93,18 +95,16 @@ export function Card({ children }) {
 }
 ```
 
-but now the parent component needs to know about the `"card__heading"` class and the implementation details of `<Card>` are leaking; there's less encapsulation...
+...but now the parent component needs to know about the `"card__heading"` className and the implementation details of `<Card>` are leaking; there's less encapsulation when the usage looks like,
 
 ```jsx
 // usage
-<h1>Cards</h1>
 <Card>
-  <h2 className="card__heading">text</h2>
+  <h1 className="card__heading">text</h1>
   <p>body</p>
 </Card>
-<h2>See also</h2>
 <Card>
-  <h3 className="card__heading">text</h3>
+  <h2 className="card__heading">text</h2>
   <p>body</p>
 </Card>
 ```
@@ -120,14 +120,32 @@ export function Card({ children, heading }) {
     </div>
   );
 }
+```
 
+...while the usage looks like,
+
+```jsx
 // usage
+<Card heading="text">
+  <p>body</p>
+</Card>
+<Level>
+  <Card heading="text">
+    <p>body</p>
+  </Card>
+</Level>
+```
+
+The `<Level>` indents all the `<H>` heading levels inside the `<Level>`.
+
+And finally (for this example) let's consider another refactoring. If we want to add a new `h1` to the page and lower every other heading it's now easy to add another `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
+
+```jsx
 <H>Cards</H>
 <Level>
   <Card heading="text">
     <p>body</p>
   </Card>
-  <H>See also</H>
   <Level>
     <Card heading="text">
       <p>body</p>
@@ -136,26 +154,7 @@ export function Card({ children, heading }) {
 </Level>
 ```
 
-And then imagine that there's an <abbr title="information architecture">IA</abbr> change that lowers the heading level of all of these because there's a new `h1` in the page. It's now easy to add a `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
-
-```jsx
-<Level>
-  <H>Cards</H>
-  <Level>
-    <Card heading="text">
-      <p>body</p>
-    </Card>
-    <H>See also</H>
-    <Level>
-      <Card heading="text">
-        <p>body</p>
-      </Card>
-    </Level>
-  </Level>
-</Level>
-```
-
-So it's an alternative composition technique for page headings that may make it easier to refactor and reuse code. The `<Level>` concept means you only need to think about whether it's a deeper level, without having to know the specific heading level number.
+So `react-accessible-headings` is an alternative composition technique for page headings that may make it easier to refactor and reuse code. The `<Level>` concept means you only need to think about whether it's a deeper level, without having to know the specific heading level number.
 
 That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept. It may not be appropriate for some codebases.
 
@@ -166,27 +165,25 @@ If you want to programatically query the current level you can,
 ```jsx
 import { useLevel, H } from "react-accessible-headings";
 
-const level = useLevel(); // level is a number (integer) from 1-6
-
-return (
-  <div className={`heading--${level}`}>
-    <H>text</H>
-  </div>
-);
+export default function() {
+  const level = useLevel(); // level is a number (integer) from 1-6
+  return (
+    <div className={`heading--${level}`}>
+      <H>text</H>
+    </div>
+  );
+}
 ```
 
 ### The 'Offset' Example <a name="examples-offset"></a>
 
-If you want to have heading levels dynamic yet related to one another you can provide an `offset` prop.
+If you want to have heading levels relative to the current level you can provide an `offset` prop,
 
 ```jsx
 <div className="card">
   <H className="card__heading">This will be the current heading level</H>
   <H offset={1} className="card__sub-heading">
     This will be one level deeper
-  </H>
-  <H offset={2} className="card__sub-sub-heading">
-    This will be two levels deeper. I don't know why you'd want this!
   </H>
   {children}
 </div>
@@ -200,18 +197,11 @@ which is a more concise way of writing this,
   <Level>
     <H className="card__sub-heading">This will be one level deeper</H>
   </Level>
-  <Level>
-    <Level>
-      <H className="card__sub-sub-heading">
-        This will be two levels deeper. I don't know why you'd want this!
-      </H>
-    </Level>
-  </Level>
   {children}
 </div>
 ```
 
-However `<Level>` will establish a new deeper _level_ whereas `offset` will not.
+However `<Level>` will establish a new deeper _heading level_ context whereas `offset` will not.
 
 ## API
 
@@ -219,19 +209,29 @@ All APIs have TypeScript types available.
 
 ### `<Level>` component
 
-Props: `value`: _(Optional)_ a **number** to override the level. An exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. There are no other props, except `children`.
+Props: `value`: _(Optional)_ a **number** to override the level. There are no other props, except `children`.
 
-This component doesn't render any HTML except `children`.
+This component doesn't render anything except `children`, so there's no wrapper element.
+
+In Development mode an exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
 
 ### `<H>` component
 
 Props: `offset`: _(Optional)_ a **number** to offset the heading level (see <a href="#examples-offset">_Examples: The 'Offset' Example_</a> for more). All other valid props for an heading are also accepted.
 
-This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
+This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
 
-### `useLevel`
+In Development mode an exception will be thrown if attempting to render invalid HTML such as `<h7>`. In Production mode an error will be logged via `console.error`.
 
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more). An exception will be thrown if useLevel resolves to an invalid heading level.
+### `useLevel` context hook
+
+If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
+
+In Development mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as 7. In Production mode an error will be logged via `console.error`.
+
+### `LevelContext` context
+
+The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`.
 
 ## Limitations
 
@@ -248,7 +248,7 @@ While this library facilitates dynamic heading levels it doesn't detect skipped 
 </Level>
 ```
 
-Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then any check would need to analyse the whole DOM and have nothing to do with React or this project, so if a run-time check was added this would be a separate project, but replicating this Axe functionality would probably be pointless.
+Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then a test would need to analyse the whole DOM and have nothing to do with React in particular or this project. Replicating this Axe functionality would likely be pointless.
 
 ## Further reading
 
