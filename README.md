@@ -6,7 +6,7 @@
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-However developers often hardcode specific heading levels into their components, limiting their flexibility and making it harder to adhere to semantic heading levels.
+However developers often hardcode specific heading levels into their components such as `<h1>` or `<h2>`, limiting their flexibility and making it harder to adhere to semantic heading levels.
 
 By using `react-accessible-headings` you can have components with flexible headings that fit the appropriate heading level, allowing you to more easily create accessible headings that don't skip levels.
 
