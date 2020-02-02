@@ -32,31 +32,11 @@ export default function() {
 }
 ```
 
-## API
-
-All APIs have TypeScript types available.
-
-### `<Level>` component
-
-Props: `value`: _(Optional)_ a **number** to override the level. An exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. There are no other props, except `children`.
-
-This component doesn't render any HTML except `children`.
-
-### `<H>` component
-
-Props: `offset`: _(Optional)_ a **number** to offset the heading level (see <a href="#examples-offset">_Examples: The 'Offset' Example_</a> for more). All other valid props for an heading are also accepted.
-
-This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
-
-### `useLevel`
-
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more). An exception will be thrown if useLevel resolves to an invalid heading level.
-
 ## Examples <a name="examples-toc"></a>
 
 ### The 'Card' Example <a name="examples-card"></a>
 
-Consider a 'card' component that might be coded as,
+Consider a 'Card' component that might be coded as,
 
 ```jsx
 export function Card({ children, heading }) {
@@ -232,6 +212,26 @@ which is a more concise way of writing this,
 ```
 
 However `<Level>` will establish a new deeper _level_ whereas `offset` will not.
+
+## API
+
+All APIs have TypeScript types available.
+
+### `<Level>` component
+
+Props: `value`: _(Optional)_ a **number** to override the level. An exception will be thrown if attempting to set an invalid value such as `7` as HTML only has h1-h6. There are no other props, except `children`.
+
+This component doesn't render any HTML except `children`.
+
+### `<H>` component
+
+Props: `offset`: _(Optional)_ a **number** to offset the heading level (see <a href="#examples-offset">_Examples: The 'Offset' Example_</a> for more). All other valid props for an heading are also accepted.
+
+This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`. An exception will be thrown if attempting to render invalid HTML such as `<h7>`.
+
+### `useLevel`
+
+If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more). An exception will be thrown if useLevel resolves to an invalid heading level.
 
 ## Limitations
 
