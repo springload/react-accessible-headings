@@ -17,7 +17,7 @@ function Level(props) {
         : contextLevel !== undefined
             ? contextLevel + 1
             : 2;
-    assertLevelRange(newLevel);
+    levelRange(newLevel);
     return (react_1.default.createElement(exports.LevelContext.Provider, { value: newLevel }, children));
 }
 exports.Level = Level;
@@ -25,13 +25,13 @@ const MAXIMUM_LEVEL = 6;
 function H(props) {
     const { children, offset, ...otherProps } = props;
     const level = react_1.useContext(exports.LevelContext);
-    const newLevel = (level !== undefined ? level : 1) +
+    const propopsedNewLevel = (level !== undefined ? level : 1) +
         (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
-    assertLevelRange(newLevel);
+    const newLevel = levelRange(propopsedNewLevel);
     return react_1.default.createElement(`h${newLevel}`, otherProps, children);
 }
 exports.H = H;
-function assertLevelRange(level) {
+function levelRange(level) {
     if (level <= 0 || level > MAXIMUM_LEVEL) {
         const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`;
         if (process && process.env && process.env.NODE_ENV === "development") {
@@ -40,12 +40,20 @@ function assertLevelRange(level) {
         else {
             console.error(errorMessage);
         }
+        // clamp values
+        if (level > MAXIMUM_LEVEL) {
+            return MAXIMUM_LEVEL;
+        }
+        else if (level < 1) {
+            return 1;
+        }
     }
+    return level;
 }
 function useLevel() {
     const level = react_1.useContext(exports.LevelContext);
-    const newLevel = level !== undefined ? level : 1;
-    assertLevelRange(newLevel);
+    const propopsedNewLevel = level !== undefined ? level : 1;
+    const newLevel = levelRange(propopsedNewLevel);
     return newLevel;
 }
 exports.useLevel = useLevel;

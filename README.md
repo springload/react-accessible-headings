@@ -221,17 +221,17 @@ Props: `offset`: _(Optional)_ a **number** to offset the heading level (see <a h
 
 This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
 
-In Development mode an exception will be thrown if attempting to render invalid HTML such as `<h7>`. In Production mode an error will be logged via `console.error`.
+In Development mode an exception will be thrown if attempting to render invalid HTML such as `<h7>`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `<h7>` is invalid HTML and it would be pointless to render that).
 
 ### `useLevel` context hook
 
 If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
 
-In Development mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as 7. In Production mode an error will be logged via `console.error`.
+In Development mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as `7`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
 
 ### `LevelContext` context
 
-The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`.
+The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
 
 ## Limitations
 
