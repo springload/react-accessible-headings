@@ -265,3 +265,7 @@ Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlike
 #### [Axe: Heading levels should only increase by one](https://dequeuniversity.com/rules/axe/3.4/heading-order)
 
 > Ensure headings are in a logical order. For example, check that all headings are marked with `h1` through `h6` elements and that these are ordered hierarchically. For example, the heading level following an `h1` element should be an `h2` element, not an `h3` element.
+
+##### [Axe: Page must contain a level-one heading](https://dequeuniversity.com/rules/axe/3.0/page-has-heading-one)
+
+> Generally, it is a best practice to ensure that the beginning of a page's main content starts with a h1 element, and also to ensure that the page contains only one h1 element.
