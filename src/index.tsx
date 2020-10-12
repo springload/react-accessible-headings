@@ -2,27 +2,23 @@ import React, {
   useContext,
   DetailedHTMLProps,
   HTMLAttributes,
-  ReactNode
+  ReactNode,
 } from "react";
 
-type LevelContextProps = number;
+export const LevelContext = React.createContext(1);
 
-export const LevelContext = React.createContext<LevelContextProps>(1);
-
-type HeadingLevelProps = {
+type LevelProps = {
   value?: number;
   children: ReactNode;
 };
 
-export function Level(props: HeadingLevelProps) {
+export function Level(props: LevelProps) {
   const { children, value: levelOverride } = props;
   const contextLevel = useContext(LevelContext);
   const newLevel =
     levelOverride !== undefined
       ? parseInt(levelOverride.toString(), 10)
-      : contextLevel !== undefined
-      ? contextLevel + 1
-      : 2;
+      : contextLevel + 1;
   levelRange(newLevel);
   return (
     <LevelContext.Provider value={newLevel}>{children}</LevelContext.Provider>
@@ -37,19 +33,20 @@ const MAXIMUM_LEVEL = 6;
 
 export function H(props: HeadingProps) {
   const { children, offset, ...otherProps } = props;
-  const level = useContext(LevelContext);
-  const propopsedNewLevel =
-    (level !== undefined ? level : 1) +
-    (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
+  const contextLevel = useContext(LevelContext);
+  const proposedLevel =
+    contextLevel + (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
 
-  const newLevel = levelRange(propopsedNewLevel);
-  return React.createElement(`h${newLevel}`, otherProps, children);
+  const level = levelRange(proposedLevel);
+
+  const Heading = `h${level}`;
+  return <Heading {...otherProps}>{children}</Heading>;
 }
 
 function levelRange(level: number): number {
   if (level <= 0 || level > MAXIMUM_LEVEL) {
     const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`;
-    if (process && process.env && process.env.NODE_ENV === "development") {
+    if (process && process.env && process.env.NODE_ENV !== "production") {
       throw Error(errorMessage);
     } else {
       console.error(errorMessage);
@@ -67,8 +64,6 @@ function levelRange(level: number): number {
 }
 
 export function useLevel(): number {
-  const level = useContext(LevelContext);
-  const propopsedNewLevel = level !== undefined ? level : 1;
-  const newLevel = levelRange(propopsedNewLevel);
-  return newLevel;
+  const contextLevel = useContext(LevelContext);
+  return levelRange(contextLevel);
 }
