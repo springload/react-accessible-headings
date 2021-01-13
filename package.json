@@ -1,6 +1,6 @@
 {
   "name": "react-accessible-headings",
-  "version": "1.3.2",
+  "version": "2.0.0-alpha",
   "description": "Dynamic <h1>, <h2>, etc heading levels... without causing accessibility problems!",
   "main": "./build/index.js",
   "scripts": {
