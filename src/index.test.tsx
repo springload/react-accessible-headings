@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 
-import { H, Level, useLevel } from "./index";
+import { getSkippedHeadings, H, Level, useLevel } from "./index";
 
 test("H renders an H1 be default", () => {
   const { getByText } = render(<H>Foo</H>);
@@ -41,6 +41,18 @@ test("Level allows overriding the level", () => {
 
 test("Level throws in non-production mode if level is > 6", () => {
   expect(() => render(<Level value={7}>{""}</Level>)).toThrow();
+});
+
+test("Valid heading levels are ignored", () => {
+  const goodHeadings = [1, 2, 3, 2];
+  expect(getSkippedHeadings(goodHeadings).length).toBe(0);
+  const goodHeadings2 = [2, 3, 2, 1, 2, 3, 2];
+  expect(getSkippedHeadings(goodHeadings2).length).toBe(0);
+});
+
+test("Invalid skipped headings are detected", () => {
+  const goodHeadings = [1, 2, 4, 2];
+  expect(getSkippedHeadings(goodHeadings).length).toBe(4);
 });
 
 describe("in production mode", () => {

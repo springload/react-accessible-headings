@@ -57,24 +57,24 @@ export function useLevel(): number {
 }
 
 function checkHeadingLevels() {
-  const skippedHeadings = getSkippedHeadings();
+  const skippedHeadings = getSkippedHeadings(
+    Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((elm) =>
+      parseFloat(elm.tagName.substring(1))
+    )
+  );
   if (skippedHeadings.length === 0) return;
-  const errorMessage = `Skipped heading levels ${skippedHeadings}${exceptionOnDev}`;
+  const errorMessage = `Invalid heading level order detected: ${skippedHeadings}${exceptionOnDev}`;
   if (!isProd()) {
     throw Error(errorMessage);
   }
   console.error(errorMessage);
 }
 
-function getSkippedHeadings() {
-  const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6"));
+export function getSkippedHeadings(headings: number[]): number[] {
   return headings.some((heading, index, arr) => {
     const precedingHeading = arr[index - 1];
     if (!precedingHeading) return false;
-    return (
-      parseFloat(heading.tagName.substring(1)) + 1 >
-      parseFloat(precedingHeading.tagName.substring(1))
-    );
+    return heading + 1 < precedingHeading;
   })
     ? headings
     : [];
