@@ -12,7 +12,7 @@ By using `react-accessible-headings` you can have components with **flexible hea
 
 Is this library necessary? Could you avoid this library and perhaps make component `props` that set the heading level, or use `children` to set the heading? Sure, that works, but (arguably) that manual approach becomes a maintenance problem across a larger app. Across a whole app this alternative approach is easier to refactor and 'indent' heading levels arbitrarily without having to synchronise the correct heading level numbers across components.
 
-This library is less than 1 kilobyte (minified and compressed).
+This library is 1 kilobyte (minified and compressed).
 
 ## Usage
 

@@ -12,12 +12,9 @@ type LevelProps = {
   children: ReactNode;
 };
 
-export function Level(props: LevelProps) {
-  const { children, value: levelOverride } = props;
+export function Level({ children, value }: LevelProps) {
   const contextLevel = useContext(LevelContext);
-  const level = levelRange(
-    levelOverride !== undefined ? levelOverride : contextLevel + 1
-  );
+  const level = levelRange(value !== undefined ? value : contextLevel + 1);
   return (
     <LevelContext.Provider value={level}>{children}</LevelContext.Provider>
   );
@@ -27,10 +24,7 @@ type HeadingProps = {
   offset?: number;
 } & DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>;
 
-const MAXIMUM_LEVEL = 6;
-
-export function H(props: HeadingProps) {
-  const { children, offset, ...otherProps } = props;
+export function H({ children, offset, ...otherProps }: HeadingProps) {
   const contextLevel = useContext(LevelContext);
   const proposedLevel = contextLevel + (offset !== undefined ? offset : 0);
   const level = levelRange(proposedLevel);
@@ -78,8 +72,8 @@ function getSkippedHeadings() {
     const precedingHeading = arr[index - 1];
     if (!precedingHeading) return false;
     return (
-      parseInt(heading.tagName.substring(1), 10) + 1 >
-      parseInt(precedingHeading.tagName.substring(1), 10)
+      parseFloat(heading.tagName.substring(1)) + 1 >
+      parseFloat(precedingHeading.tagName.substring(1))
     );
   })
     ? headings
@@ -93,5 +87,7 @@ function isProd() {
 
 const exceptionOnDev =
   ". This exception is only thrown in non-production environments.";
+
+const MAXIMUM_LEVEL = 6;
 
 const CHECK_AFTER_MS = 500;
