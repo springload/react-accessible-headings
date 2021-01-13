@@ -15,13 +15,11 @@ type LevelProps = {
 export function Level(props: LevelProps) {
   const { children, value: levelOverride } = props;
   const contextLevel = useContext(LevelContext);
-  const newLevel =
-    levelOverride !== undefined
-      ? parseInt(levelOverride.toString(), 10)
-      : contextLevel + 1;
-  levelRange(newLevel);
+  const level = levelRange(
+    levelOverride !== undefined ? levelOverride : contextLevel + 1
+  );
   return (
-    <LevelContext.Provider value={newLevel}>{children}</LevelContext.Provider>
+    <LevelContext.Provider value={level}>{children}</LevelContext.Provider>
   );
 }
 
@@ -34,36 +32,66 @@ const MAXIMUM_LEVEL = 6;
 export function H(props: HeadingProps) {
   const { children, offset, ...otherProps } = props;
   const contextLevel = useContext(LevelContext);
-  const proposedLevel =
-    contextLevel + (offset !== undefined ? parseInt(offset.toString(), 10) : 0);
-
+  const proposedLevel = contextLevel + (offset !== undefined ? offset : 0);
   const level = levelRange(proposedLevel);
-
   const Heading = `h${level}`;
+  if (!isProd()) setTimeout(checkHeadingLevels, CHECK_AFTER_MS);
   return <Heading {...otherProps}>{children}</Heading>;
 }
 
 function levelRange(level: number): number {
-  if (level <= 0 || level > MAXIMUM_LEVEL) {
-    const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}.`;
-    if (process && process.env && process.env.NODE_ENV !== "production") {
-      throw Error(errorMessage);
-    } else {
-      console.error(errorMessage);
-    }
-
-    // clamp values
-    if (level > MAXIMUM_LEVEL) {
-      return MAXIMUM_LEVEL;
-    } else if (level < 1) {
-      return 1;
-    }
+  if (level > 0 && level <= MAXIMUM_LEVEL) {
+    return level;
   }
-
-  return level;
+  const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}${exceptionOnDev}`;
+  if (!isProd()) {
+    throw Error(errorMessage);
+  }
+  console.error(errorMessage);
+  // clamp values
+  if (level > MAXIMUM_LEVEL) {
+    return MAXIMUM_LEVEL;
+  } else if (level < 1) {
+    return 1;
+  }
 }
 
 export function useLevel(): number {
   const contextLevel = useContext(LevelContext);
+  if (!isProd()) setTimeout(checkHeadingLevels, CHECK_AFTER_MS);
   return levelRange(contextLevel);
 }
+
+function checkHeadingLevels() {
+  const skippedHeadings = getSkippedHeadings();
+  if (skippedHeadings.length === 0) return;
+  const errorMessage = `Skipped heading levels ${skippedHeadings}${exceptionOnDev}`;
+  if (!isProd()) {
+    throw Error(errorMessage);
+  }
+  console.error(errorMessage);
+}
+
+function getSkippedHeadings() {
+  const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6"));
+  return headings.some((heading, index, arr) => {
+    const precedingHeading = arr[index - 1];
+    if (!precedingHeading) return false;
+    return (
+      parseInt(heading.tagName.substring(1), 10) + 1 >
+      parseInt(precedingHeading.tagName.substring(1), 10)
+    );
+  })
+    ? headings
+    : [];
+}
+
+function isProd() {
+  // assume prod unless proven otherwise
+  return !process || !process.env || process.env.NODE_ENV === "production";
+}
+
+const exceptionOnDev =
+  ". This exception is only thrown in non-production environments.";
+
+const CHECK_AFTER_MS = 500;

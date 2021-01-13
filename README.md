@@ -32,58 +32,13 @@ export default function () {
 }
 ```
 
-### The 'useLevel query' Example <a name="examples-uselevel"></a>
-
-If you want to programatically query the current level you can,
-
-```jsx
-import { useLevel, H } from "react-accessible-headings";
-
-export default function () {
-  const level = useLevel(); // level is a number (integer) from 1-6
-  return (
-    <div className={`heading--${level}`}>
-      <H>text</H>
-    </div>
-  );
-}
-```
-
-### The 'Offset' Example <a name="examples-offset"></a>
-
-If you want to have heading levels relative to the current level you can provide an `offset` prop,
-
-```jsx
-<div className="card">
-  <H className="card__heading">This will be the current heading level</H>
-  <H offset={1} className="card__sub-heading">
-    This will be one level deeper
-  </H>
-  {children}
-</div>
-```
-
-which is a more concise way of writing this,
-
-```jsx
-<div className="card">
-  <H className="card__heading">This will be the current heading level</H>
-  <Level>
-    <H className="card__sub-heading">This will be one level deeper</H>
-  </Level>
-  {children}
-</div>
-```
-
-However `<Level>` will establish a new deeper _heading level_ context whereas `offset` will not.
-
 ## API
 
 All APIs have TypeScript types available.
 
 ### `<Level>` component
 
-Sets a new heading level depth, by incrementing the current heading level for all children using the `<H>` compopent, or the `useLevel` hook.
+Sets a new heading level depth, by incrementing the current heading level for all children using the `<H>` component, or the `useLevel` hook.
 
 This component doesn't render anything except `children`, so there's no wrapper element.
 
@@ -97,7 +52,7 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
 
 In Development mode an exception will be thrown if attempting to render invalid HTML such as `<h7>`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `<h7>` is invalid HTML and it would be pointless to render that).
 
-All valid props for an HTML heading are accepted.
+All valid props / attributes for an HTML heading are accepted.
 
 Props: `offset`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<H>` without this prop it will render the current heading level depth. If instead you want to render the `<H>` with a different `offset` (number) then provide this prop.
 
@@ -113,9 +68,13 @@ In Development mode an exception will be thrown if `useLevel` resolves to an inv
 
 The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
 
-## Limitations
+## Features
 
-While this library facilitates dynamic heading levels it doesn't detect skipped heading levels through incorrect usage such as,
+`react-accessible-headings` tries to encourage correct heading levels by periodically polling the DOM to check for incorrect heading levels.
+
+This only occurs during Development mode, not in production.
+
+This helps detect skipped heading levels through incorrect usage such as,
 
 ```jsx
 <H>A Heading 1</H>
@@ -131,7 +90,25 @@ While this library facilitates dynamic heading levels it doesn't detect skipped 
 </Level>
 ```
 
-Testing in [Axe](https://www.deque.com/axe/) will reveal this error. It's unlikely that this project will introduce a runtime check for analysing heading levels as Axe already does this. Also, because webpages could have a static HTML `h1` with a React app rendering only `h2`s (a perfectly valid and accessible approach) then a test would need to analyse the whole DOM and have nothing to do with React in particular or this project. Replicating this Axe functionality would likely be pointless.
+or,
+
+```jsx
+<h1>A Heading 1</h1>
+<Level>
+  <Level>
+    <Level>
+      <H>
+        this will be a heading 4.
+        levels 2 and 3 were skipped!
+      </H>
+    </Level>
+  </Level>
+</Level>
+```
+
+Because a React app could be mounted in a webpage that already has an `h1` this test needs to analyse the whole DOM and so this has nothing in particular to do with React.
+
+Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
 
 ## Further reading
 
@@ -193,42 +170,16 @@ or,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
+  const Heading = `H${headingLevel}`;
   return (
     <div className="card">
-      {React.createElement(
-        "h" + headingLevel,
-        { className: "card__heading" },
-        heading
-      )}
-      {children}
+      <Heading className="card__heading">{children}</Heading>
     </div>
   );
 }
 ```
 
-...and now the parent component needs to set the `headingLevel` number, a confusingly indirect way of making an `h1` or `h2`.
-
-Or, perhaps you'd use `children`,
-
-```jsx
-export function Card({ children }) {
-  return <div className="card">{children}</div>;
-}
-```
-
-...but now the parent component needs to know about the `"card__heading"` className and the implementation details of `<Card>` are leaking; there's less encapsulation when the usage looks like,
-
-```jsx
-// usage
-<Card>
-  <h1 className="card__heading">text</h1>
-  <p>body</p>
-</Card>
-<Card>
-  <h2 className="card__heading">text</h2>
-  <p>body</p>
-</Card>
-```
+...which passes a maintenance burden to set the correct headingLevel prop, a confusingly indirect way of making an `h1` or `h2`. What if the component had multiple headings relative to one another?
 
 Alternatively, with `react-accessible-headings` the implementation details of `<Card>` can stay encapsulated and look like,
 
@@ -278,3 +229,48 @@ And finally (for this example) let's consider another refactoring. If we want to
 So `react-accessible-headings` is an alternative composition technique for page headings that may make it easier to refactor and reuse code. The `<Level>` concept means you only need to think about whether it's a deeper level, without having to know the specific heading level number.
 
 That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept. It may not be appropriate for some codebases.
+
+### The 'useLevel query' Example <a name="examples-uselevel"></a>
+
+If you want to programatically query the current level you can,
+
+```jsx
+import { useLevel, H } from "react-accessible-headings";
+
+export default function () {
+  const level = useLevel(); // level is a number (integer) from 1-6
+  return (
+    <div className={`heading--${level}`}>
+      <H>text</H>
+    </div>
+  );
+}
+```
+
+### The 'Offset' Example <a name="examples-offset"></a>
+
+If you want to have heading levels relative to the current level you can provide an `offset` prop,
+
+```jsx
+<div className="card">
+  <H className="card__heading">This will be the current heading level</H>
+  <H offset={1} className="card__sub-heading">
+    This will be one level deeper
+  </H>
+  {children}
+</div>
+```
+
+which is a more concise way of writing this,
+
+```jsx
+<div className="card">
+  <H className="card__heading">This will be the current heading level</H>
+  <Level>
+    <H className="card__sub-heading">This will be one level deeper</H>
+  </Level>
+  {children}
+</div>
+```
+
+However `<Level>` will establish a new deeper _heading level_ context whereas `offset` will not.
