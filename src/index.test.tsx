@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 
-import { getSkippedHeadings, H, Level, useLevel } from "./index";
+import { checkHeadingLevels, H, Level, useLevel } from "./index";
 
 test("H renders an H1 be default", () => {
   const { getByText } = render(<H>Foo</H>);
@@ -43,16 +43,23 @@ test("Level throws in non-production mode if level is > 6", () => {
   expect(() => render(<Level value={7}>{""}</Level>)).toThrow();
 });
 
-test("Valid heading levels are ignored", () => {
+test("Valid heading levels are ignored (dev mode)", () => {
   const goodHeadings = [1, 2, 3, 2];
-  expect(getSkippedHeadings(goodHeadings).length).toBe(0);
+  expect(() => checkHeadingLevels(goodHeadings)).not.toThrow();
   const goodHeadings2 = [2, 3, 2, 1, 2, 3, 2];
-  expect(getSkippedHeadings(goodHeadings2).length).toBe(0);
+  expect(() => checkHeadingLevels(goodHeadings2)).not.toThrow();
+  const goodHeadings3 = [1, 2, 3, 2];
+  expect(() => checkHeadingLevels(goodHeadings3)).not.toThrow();
 });
 
-test("Invalid skipped headings are detected", () => {
-  const goodHeadings = [1, 2, 4, 2];
-  expect(getSkippedHeadings(goodHeadings).length).toBe(4);
+test("Invalid skipped headings are detected (dev mode)", () => {
+  const skippedHeadings = [1, 2, 4, 2];
+  expect(() => checkHeadingLevels(skippedHeadings)).toThrow();
+});
+
+test("Multiple h1s are detected (dev mode)", () => {
+  const multipleH1s = [1, 2, 3, 1];
+  expect(() => checkHeadingLevels(multipleH1s)).toThrow();
 });
 
 describe("in production mode", () => {
@@ -107,5 +114,26 @@ describe("in production mode", () => {
         <Test />
       </Level>
     );
+  });
+
+  test("Valid heading levels are ignored (prod mode)", () => {
+    const goodHeadings = [1, 2, 3, 2];
+    expect(checkHeadingLevels(goodHeadings).length).toBe(0);
+    const goodHeadings2 = [2, 3, 2, 1, 2, 3, 2];
+    expect(checkHeadingLevels(goodHeadings2).length).toBe(0);
+    const goodHeadings3 = [1, 2, 3, 2];
+    expect(checkHeadingLevels(goodHeadings3).length).toBe(0);
+  });
+
+  test("Invalid skipped headings are detected (prod mode)", () => {
+    const skippedHeadings = [1, 2, 4, 2];
+    expect(checkHeadingLevels(skippedHeadings).length).toBe(
+      skippedHeadings.length
+    );
+  });
+
+  test("Multiple h1s are detected (prod mode)", () => {
+    const multipleH1s = [1, 2, 3, 1];
+    expect(checkHeadingLevels(multipleH1s).length).toBe(multipleH1s.length);
   });
 });

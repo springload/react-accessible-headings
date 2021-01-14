@@ -29,7 +29,7 @@ export function H({ children, offset, ...otherProps }: HeadingProps) {
   const proposedLevel = contextLevel + (offset !== undefined ? offset : 0);
   const level = levelRange(proposedLevel);
   const Heading = `h${level}`;
-  if (!isProd()) setTimeout(checkHeadingLevels, CHECK_AFTER_MS);
+  if (!isProd()) setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
   return <Heading {...otherProps}>{children}</Heading>;
 }
 
@@ -37,9 +37,9 @@ function levelRange(level: number): number {
   if (level > 0 && level <= MAXIMUM_LEVEL) {
     return level;
   }
-  const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}${exceptionOnDev}`;
+  const errorMessage = `Heading level "${level}" is not valid HTML5 which only allows levels 1-${MAXIMUM_LEVEL}`;
   if (!isProd()) {
-    throw Error(errorMessage);
+    throw Error(`${errorMessage}${exceptionOnDev}`);
   }
   console.error(errorMessage);
   // clamp values
@@ -52,36 +52,56 @@ function levelRange(level: number): number {
 
 export function useLevel(): number {
   const contextLevel = useContext(LevelContext);
-  if (!isProd()) setTimeout(checkHeadingLevels, CHECK_AFTER_MS);
+  if (!isProd()) setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
   return levelRange(contextLevel);
 }
 
-function checkHeadingLevels() {
-  const skippedHeadings = getSkippedHeadings(
+function checkHeadingLevelsDom() {
+  checkHeadingLevels(
     Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((elm) =>
       parseFloat(elm.tagName.substring(1))
     )
   );
-  if (skippedHeadings.length === 0) return;
-  const errorMessage = `Invalid heading level order detected: ${skippedHeadings}${exceptionOnDev}`;
-  if (!isProd()) {
-    throw Error(errorMessage);
-  }
-  console.error(errorMessage);
 }
 
-export function getSkippedHeadings(headings: number[]): number[] {
-  return headings.some((heading, index, arr) => {
-    const precedingHeading = arr[index - 1];
-    if (!precedingHeading) return false;
-    return heading + 1 < precedingHeading;
-  })
+export function checkHeadingLevels(headings: number[]): number[] {
+  const badHeadings = getBadHeadings(headings);
+  console.log({ badHeadings });
+  if (badHeadings.length > 0) {
+    const errorMessage = `Invalid heading levels detected: ${badHeadings}`;
+    if (!isProd()) {
+      throw Error(`${errorMessage}${exceptionOnDev}`);
+    }
+    console.error(errorMessage);
+  }
+  return badHeadings;
+}
+
+function getBadHeadings(headings: number[]): number[] {
+  return headings.filter(
+    // multiple H1s are not recommended. See docs.
+    (heading): boolean => heading === 1
+  ).length >= 2 ||
+    headings.some((heading, index, arr): boolean => {
+      // detect skipped levels
+      const precedingHeading = arr[index - 1];
+      if (!precedingHeading) return false;
+      console.log(index, heading, ">", precedingHeading + 1);
+
+      return heading > precedingHeading + 1;
+    })
     ? headings
     : [];
 }
 
 function isProd() {
   // assume prod unless proven otherwise
+  console.log({
+    "!process": !process,
+    "!process.env": !process.env,
+    "process.env.NODE_ENV": process.env.NODE_ENV,
+    isProd: !process || !process.env || process.env.NODE_ENV === "production",
+  });
   return !process || !process.env || process.env.NODE_ENV === "production";
 }
 
