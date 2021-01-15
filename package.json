@@ -1,7 +1,7 @@
 {
   "name": "react-accessible-headings",
-  "version": "2.0.1",
-  "description": "Dynamic <h1>, <h2>, etc heading levels... without causing accessibility problems!",
+  "version": "2.0.2",
+  "description": "Dynamic heading levels like H1, H2, that will adjust for accessibility reasons! WCAG ARIA",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc",
@@ -13,13 +13,17 @@
     "url": "https://github.com/springload/react-accessible-headings/"
   },
   "keywords": [
+    "react",
     "accessibility",
     "a11y",
     "wcag",
-    "react",
+    "aria",
+    "aria-level",
     "heading",
     "level",
-    "h1"
+    "depth",
+    "h1",
+    "h2"
   ],
   "author": "Matthew Holloway",
   "license": "ISC",

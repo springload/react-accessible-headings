@@ -41,7 +41,6 @@ function levelRange(level: number): number {
   if (!isProd()) {
     throw Error(`${errorMessage}${exceptionOnDev}`);
   }
-  console.error(errorMessage);
   // clamp values
   if (level > MAXIMUM_LEVEL) {
     return MAXIMUM_LEVEL;
@@ -66,7 +65,6 @@ function checkHeadingLevelsDom() {
 
 export function checkHeadingLevels(headings: number[]): number[] {
   const badHeadings = getBadHeadings(headings);
-  console.log({ badHeadings });
   if (badHeadings.length > 0) {
     const errorMessage = `Invalid heading levels detected: ${badHeadings}`;
     if (!isProd()) {
@@ -86,8 +84,6 @@ function getBadHeadings(headings: number[]): number[] {
       // detect skipped levels
       const precedingHeading = arr[index - 1];
       if (!precedingHeading) return false;
-      console.log(index, heading, ">", precedingHeading + 1);
-
       return heading > precedingHeading + 1;
     })
     ? headings
@@ -96,12 +92,6 @@ function getBadHeadings(headings: number[]): number[] {
 
 function isProd() {
   // assume prod unless proven otherwise
-  console.log({
-    "!process": !process,
-    "!process.env": !process.env,
-    "process.env.NODE_ENV": process.env.NODE_ENV,
-    isProd: !process || !process.env || process.env.NODE_ENV === "production",
-  });
   return !process || !process.env || process.env.NODE_ENV === "production";
 }
 
@@ -110,4 +100,4 @@ const exceptionOnDev =
 
 const MAXIMUM_LEVEL = 6;
 
-const CHECK_AFTER_MS = 500;
+const CHECK_AFTER_MS = 1; // will be clamped to ~5ms

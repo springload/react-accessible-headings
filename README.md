@@ -10,8 +10,6 @@ However developers often hardcode specific heading levels into their components 
 
 By using `react-accessible-headings` you can have components with **flexible headings that fit the appropriate heading level**, allowing you to more easily create accessible components, with headings that don't skip levels.
 
-Is this library necessary? Could you avoid this library and perhaps make component `props` that set the heading level, or use `children` to set the heading? Sure, that works, but (arguably) that manual approach becomes a maintenance problem across a larger app. Across a whole app this alternative approach is easier to refactor and 'indent' heading levels arbitrarily without having to synchronise the correct heading level numbers across components.
-
 This library is 1 kilobyte (minified and compressed).
 
 ## Usage
@@ -36,16 +34,6 @@ export default function () {
 
 All APIs have TypeScript types available.
 
-### `<Level>` component
-
-Sets a new heading level depth, by incrementing the current heading level for all children using the `<H>` component, or the `useLevel` hook.
-
-This component doesn't render anything except `children`, so there's no wrapper element.
-
-Props: `value`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<Level>` without this prop it will increment the heading level by `1`. If you want to increment by a different `value` (number) that is not `1` then provide this prop.
-
-In Development mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
-
 ### `<H>` component
 
 This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>`.
@@ -58,6 +46,16 @@ Props: `offset`: _(Optional)_ this optional prop will override the default behav
 
 See <a href="#examples-offset">_Examples: The 'Offset' Example_</a> for more.
 
+### `<Level>` component
+
+Sets a new heading level depth, by incrementing the current heading level for all children using the `<H>` component, or the `useLevel` hook.
+
+This component doesn't render anything except `children`, so there's no wrapper element.
+
+Props: `value`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<Level>` without this prop it will increment the heading level by `1`. If you want to increment by a different `value` (number) that is not `1` then provide this `value` prop.
+
+In Development mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
+
 ### `useLevel` context hook
 
 If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
@@ -68,11 +66,11 @@ In Development mode an exception will be thrown if `useLevel` resolves to an inv
 
 The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
 
-## Features
+## Feature: Detecting skipped headings
 
-`react-accessible-headings` tries to encourage correct heading levels by periodically polling the DOM to check for incorrect heading levels.
+`react-accessible-headings` tries to encourage correct heading levels by polling the DOM to check for incorrect heading levels.
 
-This only occurs during Development mode, not in production.
+**This only occurs during Development mode, not in production**.
 
 This helps detect skipped heading levels through incorrect usage such as,
 
@@ -106,8 +104,6 @@ or,
 </Level>
 ```
 
-Because a React app could be mounted in a webpage that already has an `h1` this test needs to analyse the whole DOM and so this has nothing in particular to do with React.
-
 Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
 
 ## Further reading
@@ -131,6 +127,8 @@ Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error
 > Generally, it is a best practice to ensure that the beginning of a page's main content starts with a h1 element, and also to ensure that the page contains only one h1 element.
 
 ## Justifications <a id="examples-toc">#</a>
+
+Is this library necessary? Could you avoid this library and perhaps make component `props` that set the heading level, or use `children` to set the heading? Sure, that works, but (arguably) that manual approach becomes a maintenance problem across a larger app. Across a whole app this alternative approach is easier to refactor and 'indent' heading levels arbitrarily without having to synchronise the correct heading level numbers across components.
 
 ### The 'Card' Example <a name="examples-card"></a>
 
@@ -166,20 +164,21 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-or,
+or more concisely,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
   const Heading = `H${headingLevel}`;
   return (
     <div className="card">
-      <Heading className="card__heading">{children}</Heading>
+      <Heading className="card__heading">{heading}</Heading>
+      {children}
     </div>
   );
 }
 ```
 
-...which passes a maintenance burden to set the correct headingLevel prop, a confusingly indirect way of making an `h1` or `h2`. What if the component had multiple headings relative to one another?
+...which is a confusingly indirect way of making an `h1` or `h2`, and it creates a maintenance burden on developers to know the correct level depth of a heading.
 
 Alternatively, with `react-accessible-headings` the implementation details of `<Card>` can stay encapsulated and look like,
 
@@ -194,32 +193,16 @@ export function Card({ children, heading }) {
 }
 ```
 
-...while the usage looks like,
-
-```jsx
-// usage
-<Card heading="text">
-  <p>body</p>
-</Card>
-<Level>
-  <Card heading="text">
-    <p>body</p>
-  </Card>
-</Level>
-```
-
-The `<Level>` indents all the `<H>` heading levels inside the `<Level>`.
-
 And finally (for this example) let's consider another refactoring. If we want to add a new `h1` to the page and lower every other heading it's now easy to add another `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
 
 ```jsx
 <H>Cards</H>
 <Level>
-  <Card heading="text">
+  <Card heading="my title">
     <p>body</p>
   </Card>
   <Level>
-    <Card heading="text">
+    <Card heading="my title2">
       <p>body</p>
     </Card>
   </Level>
