@@ -133,11 +133,11 @@ The reason this was implemented by polling the DOM, rather than analysing the Re
 
 > Generally, it is a best practice to ensure that the beginning of a page's main content starts with a h1 element, and also to ensure that the page contains only one h1 element.
 
-## Justifications <a id="examples-toc">#</a>
+## Justifications <a id="examples-toc" href="#examples-doc">#</a>
 
 Is this library necessary? Could you avoid this library and perhaps make component `props` that set the heading level, or use `children` to set the heading? Sure, that works, but (arguably) that manual approach becomes a maintenance problem across a larger app. Across a whole app this alternative approach is easier to refactor and 'indent' heading levels arbitrarily without having to synchronise the correct heading level numbers across components.
 
-### The 'Card' Example <a name="examples-card"></a>
+### The 'Card' Example <a id="examples-card" href="#examples-card">#</a>
 
 Imagine you have a hypothetical 'Card' component that is coded as,
 
@@ -152,9 +152,9 @@ export function Card({ children, heading }) {
 }
 ```
 
-But then you want to make the `<h3>` configurable to make it either an `<h2>`, `<h3>`, or `<h4>. The card will be used in two places with two different heading levels.
+But then you want to make the `<h3>` configurable to make it either an `<h2>`, `<h3>`, or `<h4>`.
 
-So you might refactor the code to support that feature like this,
+You might refactor the code to support that feature like this,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
