@@ -2,38 +2,38 @@
 
 ## Why?
 
-The [W3C: WCAG, WAI say](https://www.w3.org/WAI/tutorials/page-structure/headings/),
+In order to make accessible web pages the [W3C: WCAG, WAI say](https://www.w3.org/WAI/tutorials/page-structure/headings/),
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-So an accessible app should have heading levels in a tree, a hierarchy, and never skip levels, like this...
+So an accessible app **must** have heading levels like this...
 
-* H1
-  * H2
-    * H3
-    * H3
-  * H2
-    * H3
-      * H4
-      * H4
-  * H2
+- H1
+  - H2
+    - H3
+    - H3
+  - H2
+    - H3
+      - H4
+      - H4
+  - H2
 
-Not 
+Not like this,
 
-* H1
-  * H6
-* H3
-  * H1 (there should only be a single H1!)
-  * H5
-    * H4
-    * H4
-* H1
+- H1
+  - H6
+- H3
+  - H1 (there should only be a single H1!)
+  - H5
+    - H4
+    - H4
+- H1
 
-However as developers of React components it's hard to make components match this semantic hierarchy. We typically hardcode an `<h2>`, or an `<h3>` into a React component, limiting its flexibility and making it harder to adhere to WCAG.
+However as developers of React components it's hard to make components match this semantic hierarchy. We typically hardcode heading levels, like an `<h2>`, or an `<h3>`, into a component. This would limit its flexibility and make it harder to adhere to W3C WCAG.
 
 By using `react-accessible-headings` you can have components with **flexible headings that fit the appropriate heading level**, allowing you to more easily create accessible components, with headings that don't skip levels.
 
-Could you instead write components that accept `props` to set a heading level? Sure. But that requires manual maintenance of the hierarchy. Indenting is harder. It's easier to make mistakes.
+Could you instead write components that accept `props` to set a heading level? Sure. But that requires manual maintenance of the hierarchy. Indenting becomes harder, and it's easier to make mistakes.
 
 This library is 1 kilobyte (minified and compressed).
 
@@ -66,8 +66,9 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>` 
 `react-accessible-headings` tries to help you maintain valid heading hierarchies, so it considers it an application bug to render an `<h7>` (the HTML spec only has 6 heading levels). This might happen if you have too many `<Level>`s above it.
 
 To help debug the error...
-* In **Development** mode an exception will be thrown if attempting to render invalid levels such as `h7`. Fix the wrongly nested `<Level>` elements above it.
-* In **Production** mode there's different behaviour. No exception will be thrown, but a message will printed via `console.error`. The heading will be rendered but the value will be clamped from 1-6 (so an attempt to render `<h7>` will be rendered as an `<h6>`).
+
+- In **Development** mode an exception will be thrown if attempting to render invalid levels such as `h7`. Fix the wrongly nested `<Level>` elements above it.
+- In **Production** mode there's different behaviour. No exception will be thrown, but a message will printed via `console.error`. The heading will be rendered but the value will be clamped from 1-6 (so an attempt to render `<h7>` will be rendered as an `<h6>`).
 
 All valid props / attributes for an HTML heading are also accepted.
 
@@ -83,13 +84,13 @@ This component doesn't render anything except `children`, so there's no wrapper 
 
 Props: `value`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<Level>` without this prop it will increment the heading level by `1`. If you want to increment by a different `value` (number) that is not `1` then provide this `value` prop. You probably shouldn't be using this.
 
-In Development mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
+In **Development** mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
 
 ### `useLevel` context hook
 
 If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
 
-In Development mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as `7`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+In **Development** mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as `7`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
 
 ### `LevelContext` context
 
