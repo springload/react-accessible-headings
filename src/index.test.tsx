@@ -3,6 +3,21 @@ import { render } from "@testing-library/react";
 
 import { checkHeadingLevels, H, Level, useLevel } from "./index";
 
+export function Card({ children, heading, headingLevel }) {
+  return (
+    <div className="card">
+      {headingLevel === 2 ? (
+        <h2 className="card__heading">{heading}</h2>
+      ) : headingLevel === 3 ? (
+        <h3 className="card__heading">{heading}</h3>
+      ) : headingLevel === 4 ? (
+        <h4 className="card__heading">{heading}</h4>
+      ) : null}
+      {children}
+    </div>
+  );
+}
+
 test("H renders an H1 be default", () => {
   const { getByText } = render(<H>Foo</H>);
   const headingEl = getByText("Foo");

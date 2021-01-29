@@ -41,12 +41,7 @@ function levelRange(level: number): number {
   if (!isProd()) {
     throw Error(`${errorMessage}${exceptionOnDev}`);
   }
-  // clamp values
-  if (level > MAXIMUM_LEVEL) {
-    return MAXIMUM_LEVEL;
-  } else if (level < 1) {
-    return 1;
-  }
+  return Math.min(Math.max(1, level), MAXIMUM_LEVEL);
 }
 
 export function useLevel(): number {

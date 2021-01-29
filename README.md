@@ -107,7 +107,7 @@ There are two types of errors that are checked
 1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
 2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
 
-An exception will be thrown if any of these error occur.
+An exception will be thrown if any of these errors occur.
 
 Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
 
@@ -145,14 +145,14 @@ Imagine you have a hypothetical 'Card' component that is coded as,
 export function Card({ children, heading }) {
   return (
     <div className="card">
-      <h1 className="card__heading">{heading}</h1>
+      <h3 className="card__heading">{heading}</h3>
       {children}
     </div>
   );
 }
 ```
 
-But then you want to make the `<h1>` configurable to make it either an `<h1>` or an `<h2>`. The card will be used in two places with two different heading levels.
+But then you want to make the `<h3>` configurable to make it either an `<h2>`, `<h3>`, or `<h4>. The card will be used in two places with two different heading levels.
 
 So you might refactor the code to support that feature like this,
 
@@ -160,10 +160,12 @@ So you might refactor the code to support that feature like this,
 export function Card({ children, heading, headingLevel }) {
   return (
     <div className="card">
-      {headingLevel === 1 ? (
-        <h1 className="card__heading">{heading}</h1>
-      ) : headingLevel === 2 ? (
+      {headingLevel === 2 ? (
         <h2 className="card__heading">{heading}</h2>
+      ) : headingLevel === 3 ? (
+        <h3 className="card__heading">{heading}</h3>
+      ) : headingLevel === 4 ? (
+        <h4 className="card__heading">{heading}</h4>
       ) : null}
       {children}
     </div>
@@ -185,7 +187,7 @@ export function Card({ children, heading, headingLevel }) {
 }
 ```
 
-...which is a confusingly indirect way of making an `h1` or `h2`, and it creates a maintenance burden on developers to know the correct level depth of a heading.
+...which is a confusingly indirect way of making a heading level, and it creates a maintenance burden on developers to know the correct level depth of a heading.
 
 Alternatively, with `react-accessible-headings` the implementation details of `<Card>` can stay encapsulated and look like,
 
@@ -200,7 +202,7 @@ export function Card({ children, heading }) {
 }
 ```
 
-And finally (for this example) let's consider another refactoring. If we want to add a new `h1` to the page and lower every other heading it's now easy to add another `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
+And finally (for this example) let's consider another refactoring. If we want to add a new `h2` to the page and lower every other heading it's now easy to add another `<Level>` wrapper to indent everything and you're done. Much easier than updating lots of `h*` numbers around the code to realign them all...
 
 ```jsx
 <H>Cards</H>
