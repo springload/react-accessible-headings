@@ -33,6 +33,8 @@ However as developers of React components it's hard to make components match thi
 
 By using `react-accessible-headings` you can have components with **flexible headings that fit the appropriate heading level**, allowing you to more easily create accessible components, with headings that don't skip levels.
 
+Could you instead write components that accept `props` to set a heading level? Sure. But that requires manual maintenance of the hierarchy. Indenting is harder. It's easier to make mistakes.
+
 This library is 1 kilobyte (minified and compressed).
 
 ## Usage
@@ -95,43 +97,20 @@ The raw React Context. Note that the value may be `undefined` in which case you 
 
 ## Unusual Feature: Detecting skipped headings
 
-`react-accessible-headings` tries to encourage correct heading levels by polling the DOM to check for incorrect heading levels.
+`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors.
 
 **This only occurs during Development mode, not in Production**.
 
-This helps detect skipped heading levels through incorrect usage such as,
+There are two types of errors that are checked
 
-```jsx
-<H>A Heading 1</H>
-<Level>
-  <Level>
-    <Level>
-      <H>
-        this will be a heading 4.
-        levels 2 and 3 were skipped!
-      </H>
-    </Level>
-  </Level>
-</Level>
-```
+1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
+2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
 
-or,
-
-```jsx
-<h1>A Heading 1</h1>
-<Level>
-  <Level>
-    <Level>
-      <H>
-        this will be a heading 4.
-        levels 2 and 3 were skipped!
-      </H>
-    </Level>
-  </Level>
-</Level>
-```
+An exception will be thrown if any of these error occur.
 
 Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
+
+The reason this was implemented by polling the DOM, rather than analysing the React VDOM (or something), is because only the real DOM knows the actual heading levels that screen readers will use for accessibility reasons. Pages could include headings outside of React apps that affect the heading level, so this library needs to poll the real DOM, but only in Development mode.
 
 ## Further reading
 
