@@ -133,7 +133,7 @@ The reason this was implemented by polling the DOM, rather than analysing the Re
 
 > Generally, it is a best practice to ensure that the beginning of a page's main content starts with a h1 element, and also to ensure that the page contains only one h1 element.
 
-## Justifications <a id="examples-toc" href="#examples-doc">#</a>
+## Justifications <a id="examples-toc" href="#examples-toc">#</a>
 
 Is this library necessary? Could you avoid this library and perhaps make component `props` that set the heading level, or use `children` to set the heading? Sure, that works, but (arguably) that manual approach becomes a maintenance problem across a larger app. Across a whole app this alternative approach is easier to refactor and 'indent' heading levels arbitrarily without having to synchronise the correct heading level numbers across components.
 
@@ -222,7 +222,7 @@ So `react-accessible-headings` is an alternative composition technique for page 
 
 That all said, having a flexible heading level may be more abstract and confusing to some developers. It's an extra thing to learn, even though it is a simple concept. It may not be appropriate for some codebases.
 
-### The 'useLevel query' Example <a name="examples-uselevel"></a>
+### The 'useLevel query' Example <a id="examples-uselevel" href="#examples-uselevel">#</a>
 
 If you want to programatically query the current level you can,
 
@@ -239,7 +239,7 @@ export default function () {
 }
 ```
 
-### The 'Offset' Example <a name="examples-offset"></a>
+### The 'Offset' Example <a id="examples-offset" href="#examples-offset">#</a>
 
 If you want to have heading levels relative to the current level you can provide an `offset` prop,
 
