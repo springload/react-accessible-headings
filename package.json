@@ -1,6 +1,6 @@
 {
   "name": "react-accessible-headings",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "Dynamic heading levels like H1, H2, that will adjust for accessibility reasons! WCAG ARIA",
   "main": "./build/index.js",
   "scripts": {
