@@ -51,6 +51,7 @@ export function useLevel(): number {
 }
 
 function checkHeadingLevelsDom() {
+  if (typeof window === "undefined") return; // No need to run during SSR
   checkHeadingLevels(
     Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((elm) =>
       parseFloat(elm.tagName.substring(1))
@@ -86,8 +87,8 @@ function getBadHeadings(headings: number[]): number[] {
 }
 
 function isProd() {
-  // assume prod unless proven otherwise
-  return !process || !process.env || process.env.NODE_ENV === "production";
+  if (typeof process === undefined) return true;
+  return process && process.env && process.env.NODE_ENV === "production";
 }
 
 const exceptionOnDev =
