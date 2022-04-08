@@ -77,7 +77,7 @@ There are two types of errors that are checked
 1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
 2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
 
-An exception will be thrown if any of these errors occur in Development mode. In production mode a `console.error()` will be printed.
+A `console.error()` will be printed if an error occurs.
 
 Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
 
@@ -93,10 +93,7 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>` 
 
 `react-accessible-headings` tries to help you maintain valid heading hierarchies, so it considers it an application bug to render an `<h7>` (the HTML spec only has 6 heading levels). This might happen if you have too many `<Level>`s above it.
 
-To help debug the error...
-
-- In **Development** mode an exception will be thrown if attempting to render invalid levels such as `h7`. Fix the wrongly nested `<Level>` elements above it.
-- In **Production** mode there's different behaviour. No exception will be thrown, but a message will printed via `console.error`. The heading will be rendered but the value will be clamped from 1-6 (so an attempt to render `<h7>` will be rendered as an `<h6>`).
+To help debug the error a message will printed via `console.error` if attempting to render invalid levels such as `h7`. To resolve this error fix the wrongly nested `<Level>` elements above it.
 
 All valid props / attributes for an HTML heading are also accepted.
 
@@ -111,18 +108,25 @@ Sets a new heading level depth, by incrementing the current heading level for al
 This component doesn't render anything except `children`, so there's no wrapper element.
 
 Props: `value`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<Level>` without this prop it will increment the heading level by `1`. If you want to increment by a different `value` (number) that is not `1` then provide this `value` prop. You probably shouldn't be using this.
+Props: `hClassName`: _(Optional)_ this optional prop will set a className on all descendant `<H>`s.
 
-In **Development** mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
+An error will be logged via `console.error` if attempting to set an invalid value such as `7`, because HTML only has h1-h6.
 
 ### `useLevel` context hook
 
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
+If you'd like to inspect the current `level` context value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
 
-In **Development** mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as `7`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+An error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+
+### `useHClassName` context hook
+
+If for some reason you'd like to inspect the current `hClassName` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
+
+an error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
 
 ### `LevelContext` context
 
-The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
+Provides direct access to the React Context which is an object with type `undefined | { level: number, hClassName?: string }`. Note that the value may be `undefined` in which case you should infer a `level` of `1`. No clamping of valid ranges of values occurs through this direct accesss.
 
 ## Further reading
 
