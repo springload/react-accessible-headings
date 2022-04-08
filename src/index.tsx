@@ -6,31 +6,58 @@ import React, {
 } from "react";
 
 export const LevelContext = React.createContext(1);
+export const HClassNameContext = React.createContext("");
+
+type HClassName = string;
 
 type LevelProps = {
-  value?: number;
-  children: ReactNode;
+	value?: number;
+	children: ReactNode;
+	hClassName?: HClassName;
 };
 
-export function Level({ children, value }: LevelProps) {
-  const contextLevel = useContext(LevelContext);
-  const level = levelRange(value !== undefined ? value : contextLevel + 1);
-  return (
-    <LevelContext.Provider value={level}>{children}</LevelContext.Provider>
-  );
+export function Level({ children, value, hClassName }: LevelProps) {
+	const contextLevel = useContext(LevelContext);
+	const level = levelRange(value !== undefined ? value : contextLevel + 1);
+
+	const contextHClassName = useContext(HClassNameContext);
+
+	return (
+		<LevelContext.Provider value={level}>
+			<HClassNameContext.Provider value={hClassName || contextHClassName}>
+				{children}
+			</HClassNameContext.Provider>
+		</LevelContext.Provider>
+	);
 }
 
 type HeadingProps = {
-  offset?: number;
+	offset?: number;
 } & DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>;
 
-export function H({ children, offset, ...otherProps }: HeadingProps) {
+export function H({
+	children,
+	offset,
+	className = "",
+	...otherProps
+}: HeadingProps) {
   const contextLevel = useContext(LevelContext);
   const proposedLevel = contextLevel + (offset !== undefined ? offset : 0);
   const level = levelRange(proposedLevel);
-  const Heading = `h${level}`;
-  if (!isProd()) setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
-  return <Heading {...otherProps}>{children}</Heading>;
+
+	const contextHClassName = useContext(HClassNameContext);
+	// merge and trim unneeded spaces between classNames
+	const hClassName = [contextHClassName, className].filter(Boolean).join(" ");
+
+	if (!isProd()) setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
+
+	// couldn't have JSX syntax, because ts throws
+	// "Property 'children' does not exist on type 'IntrinsicAttributes'"
+	return React.createElement(
+		`h${level}`,
+		{ className: hClassName, ...otherProps },
+		children
+	);
 }
 
 function levelRange(level: number): number {
@@ -48,6 +75,10 @@ export function useLevel(): number {
   const contextLevel = useContext(LevelContext);
   if (!isProd()) setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
   return levelRange(contextLevel);
+}
+
+export function useHClassName(): HClassName {
+	return useContext(HClassNameContext);
 }
 
 function checkHeadingLevelsDom() {
