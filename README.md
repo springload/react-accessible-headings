@@ -42,8 +42,8 @@ This library is 1 kilobyte (minified and compressed).
 ## Usage
 
 ```jsx
-import React from "react";
-import { Level, H } from "react-accessible-headings";
+import React from 'react';
+import { Level, H } from 'react-accessible-headings';
 
 export default function () {
   return (
@@ -231,7 +231,7 @@ That all said, having a flexible heading level may be more abstract and confusin
 If you want to programatically query the current level you can,
 
 ```jsx
-import { useLevel, H } from "react-accessible-headings";
+import { useLevel, H } from 'react-accessible-headings';
 
 export default function () {
   const level = useLevel(); // level is a number (integer) from 1-6

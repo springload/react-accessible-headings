@@ -5,7 +5,7 @@ import {
   DetailedHTMLProps,
   HTMLAttributes,
   ReactNode,
-} from "react";
+} from 'react';
 
 export const HeadingsContext = createContext<
   | undefined
@@ -54,7 +54,7 @@ export function H({
   // merge and trim unneeded spaces between classNames
   const mergedClassName = [context.hClassName, className]
     .filter(Boolean)
-    .join(" ");
+    .join(' ');
 
   setTimeout(checkHeadingLevelsDom, CHECK_AFTER_MS);
 
@@ -63,7 +63,7 @@ export function H({
   return createElement(
     `h${level}`,
     { className: mergedClassName, ...otherProps },
-    children
+    children,
   );
 }
 
@@ -88,11 +88,11 @@ export function useHClassName(): string | undefined {
 }
 
 function checkHeadingLevelsDom() {
-  if (typeof window === "undefined") return; // No need to run during SSR
+  if (typeof window === 'undefined') return; // No need to run during SSR
   checkHeadingLevels(
-    Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((elm) =>
-      parseFloat(elm.tagName.substring(1))
-    )
+    Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6')).map((elm) =>
+      parseFloat(elm.tagName.substring(1)),
+    ),
   );
 }
 
@@ -100,7 +100,7 @@ export function checkHeadingLevels(headings: number[]): number[] {
   const badHeadings = getBadHeadings(headings);
   if (badHeadings.length > 0) {
     const errorMessage = `WCAG accessibility issue detected: skipped heading levels ${badHeadings.map(
-      (num) => `h${num}`
+      (num) => `h${num}`,
     )}. See https://www.npmjs.com/package/react-accessible-headings#why`;
     console.error(errorMessage);
   }
@@ -110,7 +110,7 @@ export function checkHeadingLevels(headings: number[]): number[] {
 function getBadHeadings(headings: number[]): number[] {
   return headings.filter(
     // multiple H1s are not recommended. See docs.
-    (heading): boolean => heading === 1
+    (heading): boolean => heading === 1,
   ).length >= 2 ||
     headings.some((heading, index, arr): boolean => {
       // detect skipped levels
