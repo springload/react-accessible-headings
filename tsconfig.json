@@ -9,7 +9,7 @@
     "strict": false,
     "module": "commonjs",
     "target": "esnext",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
