@@ -6,19 +6,7 @@ In order to make accessible web pages the [W3C: WCAG, WAI say](https://www.w3.or
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-So an accessible app **must** have heading levels like this...
-
-- H1
-  - H2
-    - H3
-    - H3
-  - H2
-    - H3
-      - H4
-      - H4
-  - H2
-
-Not like this,
+So an accessible app **must** not have heading levels like this...
 
 - H1
   - H6
@@ -28,6 +16,20 @@ Not like this,
     - H4
     - H4
 - H1
+
+Instead they should look like,
+
+- H1
+  - H2
+    - H3
+    - H3
+  - H2
+    - H3
+      - H4
+      - H4
+  - H2
+
+## Why a React library?
 
 However as developers of React components it's hard to make components match this semantic hierarchy. We typically hardcode heading levels, like an `<h2>`, or an `<h3>`, into a component. This would limit its flexibility and make it harder to adhere to W3C WCAG.
 
@@ -55,6 +57,21 @@ export default function () {
 }
 ```
 
+### Detecting skipped headings
+
+`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors and printing errors to `console.error`. These errors are page-wide and not necessarily specific to `react-accessible-headings`.
+
+There are two types of errors that are checked
+
+1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
+2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
+
+A `console.error()` will be printed if an error occurs.
+
+Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
+
+The reason this was implemented by polling the DOM, rather than analysing the React VDOM (or something), is because only the real DOM knows the actual heading levels that screen readers will use for accessibility reasons. Pages could include headings outside of React apps that affect the heading level, so this library needs to poll the DOM.
+
 ## API
 
 All APIs have TypeScript types available.
@@ -65,10 +82,7 @@ This component renders either `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, or `<h6>` 
 
 `react-accessible-headings` tries to help you maintain valid heading hierarchies, so it considers it an application bug to render an `<h7>` (the HTML spec only has 6 heading levels). This might happen if you have too many `<Level>`s above it.
 
-To help debug the error...
-
-- In **Development** mode an exception will be thrown if attempting to render invalid levels such as `h7`. Fix the wrongly nested `<Level>` elements above it.
-- In **Production** mode there's different behaviour. No exception will be thrown, but a message will printed via `console.error`. The heading will be rendered but the value will be clamped from 1-6 (so an attempt to render `<h7>` will be rendered as an `<h6>`).
+To help debug the error a message will printed via `console.error` if attempting to render invalid levels such as `h7`. To resolve this error fix the wrongly nested `<Level>` elements above it.
 
 All valid props / attributes for an HTML heading are also accepted.
 
@@ -83,35 +97,25 @@ Sets a new heading level depth, by incrementing the current heading level for al
 This component doesn't render anything except `children`, so there's no wrapper element.
 
 Props: `value`: _(Optional)_ this optional prop will override the default behaviour. The default behaviour is when you use `<Level>` without this prop it will increment the heading level by `1`. If you want to increment by a different `value` (number) that is not `1` then provide this `value` prop. You probably shouldn't be using this.
+Props: `hClassName`: _(Optional)_ this optional prop will set a className on all descendant `<H>`s.
 
-In **Development** mode an exception will be thrown if attempting to set an invalid value such as `7`, because HTML only has h1-h6. In Production mode an error will be logged via `console.error`.
+An error will be logged via `console.error` if attempting to set an invalid value such as `7`, because HTML only has h1-h6.
 
 ### `useLevel` context hook
 
-If for some reason you'd like to inspect the current `level` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
+If you'd like to inspect the current `level` context value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
 
-In **Development** mode an exception will be thrown if `useLevel` resolves to an invalid heading level such as `7`. In Production mode an error will be logged via `console.error`, and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+An error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+
+### `useHClassName` context hook
+
+If for some reason you'd like to inspect the current `hClassName` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
+
+an error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
 
 ### `LevelContext` context
 
-The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
-
-## Unusual Feature: Detecting skipped headings
-
-`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors.
-
-**This only occurs during Development mode, not in Production**.
-
-There are two types of errors that are checked
-
-1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
-2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
-
-An exception will be thrown if any of these errors occur.
-
-Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
-
-The reason this was implemented by polling the DOM, rather than analysing the React VDOM (or something), is because only the real DOM knows the actual heading levels that screen readers will use for accessibility reasons. Pages could include headings outside of React apps that affect the heading level, so this library needs to poll the real DOM, but only in Development mode.
+Provides direct access to the React Context which is an object with type `undefined | { level: number, hClassName?: string }`. Note that the value may be `undefined` in which case you should infer a `level` of `1`. No clamping of valid ranges of values occurs through this direct accesss.
 
 ## Further reading
 
