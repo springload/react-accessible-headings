@@ -46,14 +46,14 @@ import React from "react";
 import { Level, H } from "react-accessible-headings";
 
 export default function () {
-  return (
-    <div>
-      <H>This will be a heading 1</H>
-      <Level>
-        <H>and this a Heading 2</H>
-      </Level>
-    </div>
-  );
+	return (
+		<div>
+			<H>This will be a heading 1</H>
+			<Level>
+				<H>and this a Heading 2</H>
+			</Level>
+		</div>
+	);
 }
 ```
 
@@ -109,9 +109,7 @@ An error will be logged via `console.error` if `useLevel` resolves to an invalid
 
 ### `useHClassName` context hook
 
-If for some reason you'd like to inspect the current `hClassName` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
-
-an error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+If for some reason you'd like to inspect the current `hClassName` value, then `useHClassName()` which will return a **string** representing the className of the Heading elements in the current tree (see <a href="#examples-usehclassname">_Examples: The 'useHClassName' Example_</a> for more).
 
 ### `LevelContext` context
 
@@ -147,12 +145,12 @@ Imagine you have a hypothetical 'Card' component that is coded as,
 
 ```jsx
 export function Card({ children, heading }) {
-  return (
-    <div className="card">
-      <h3 className="card__heading">{heading}</h3>
-      {children}
-    </div>
-  );
+	return (
+		<div className="card">
+			<h3 className="card__heading">{heading}</h3>
+			{children}
+		</div>
+	);
 }
 ```
 
@@ -162,18 +160,18 @@ You might refactor the code to support that feature like this,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
-  return (
-    <div className="card">
-      {headingLevel === 2 ? (
-        <h2 className="card__heading">{heading}</h2>
-      ) : headingLevel === 3 ? (
-        <h3 className="card__heading">{heading}</h3>
-      ) : headingLevel === 4 ? (
-        <h4 className="card__heading">{heading}</h4>
-      ) : null}
-      {children}
-    </div>
-  );
+	return (
+		<div className="card">
+			{headingLevel === 2 ? (
+				<h2 className="card__heading">{heading}</h2>
+			) : headingLevel === 3 ? (
+				<h3 className="card__heading">{heading}</h3>
+			) : headingLevel === 4 ? (
+				<h4 className="card__heading">{heading}</h4>
+			) : null}
+			{children}
+		</div>
+	);
 }
 ```
 
@@ -181,13 +179,13 @@ or more concisely,
 
 ```jsx
 export function Card({ children, heading, headingLevel }) {
-  const Heading = `H${headingLevel}`;
-  return (
-    <div className="card">
-      <Heading className="card__heading">{heading}</Heading>
-      {children}
-    </div>
-  );
+	const Heading = `H${headingLevel}`;
+	return (
+		<div className="card">
+			<Heading className="card__heading">{heading}</Heading>
+			{children}
+		</div>
+	);
 }
 ```
 
@@ -197,12 +195,12 @@ Alternatively, with `react-accessible-headings` the implementation details of `<
 
 ```jsx
 export function Card({ children, heading }) {
-  return (
-    <div className="card">
-      <H className="card__heading">{heading}</H>
-      {children}
-    </div>
-  );
+	return (
+		<div className="card">
+			<H className="card__heading">{heading}</H>
+			{children}
+		</div>
+	);
 }
 ```
 
@@ -234,12 +232,12 @@ If you want to programatically query the current level you can,
 import { useLevel, H } from "react-accessible-headings";
 
 export default function () {
-  const level = useLevel(); // level is a number (integer) from 1-6
-  return (
-    <div className={`heading--${level}`}>
-      <H>text</H>
-    </div>
-  );
+	const level = useLevel(); // level is a number (integer) from 1-6
+	return (
+		<div className={`heading--${level}`}>
+			<H>text</H>
+		</div>
+	);
 }
 ```
 
@@ -249,11 +247,11 @@ If you want to have heading levels relative to the current level you can provide
 
 ```jsx
 <div className="card">
-  <H className="card__heading">This will be the current heading level</H>
-  <H offset={1} className="card__sub-heading">
-    This will be one level deeper
-  </H>
-  {children}
+	<H className="card__heading">This will be the current heading level</H>
+	<H offset={1} className="card__sub-heading">
+		This will be one level deeper
+	</H>
+	{children}
 </div>
 ```
 
@@ -261,12 +259,57 @@ which is a more concise way of writing this,
 
 ```jsx
 <div className="card">
-  <H className="card__heading">This will be the current heading level</H>
-  <Level>
-    <H className="card__sub-heading">This will be one level deeper</H>
-  </Level>
-  {children}
+	<H className="card__heading">This will be the current heading level</H>
+	<Level>
+		<H className="card__sub-heading">This will be one level deeper</H>
+	</Level>
+	{children}
 </div>
 ```
 
 However `<Level>` will establish a new deeper _heading level_ context whereas `offset` will not.
+
+### The 'hClassName' Example <a id="examples-hclassname" href="#examples-hclassname">#</a>
+
+If you ever need to style multiple headings with css, you might find that your highly composable React code (for a good reason)
+hides the heading selectors from you:
+
+```css
+.card h{???} {
+  margin-top: 2em;
+}
+```
+
+In this case you can set `className` on every `<H>` element and use the class selector in CSS, or as a shorthand you can provide `hClassName` prop to a `<Level>` element, which will set your className on every decendant heading element in the sub-tree:
+
+```jsx
+<Level hClassName="heading">
+	<H>My ClassName is `heading`</H>
+	<H className="custom">My ClassName is `heading custom`</H>
+	<Level>
+		<H>My ClassName is also `heading`</H>
+		<Level hClassName="card-heading">
+			<H>Mine changed to `card-heading`</H>
+		</Level>
+	</Level>
+</Level>
+```
+
+### The 'useHClassName' Example <a id="examples-usehclassname" href="#examples-usehclassname">#</a>
+
+This example shows how you can utilize `useHClassName` to extend `hClassName` instead of overriding it.
+
+```jsx
+import { useHClassName, Level } from "react-accessible-headings";
+
+function Nested() {
+	const hClassName = useHClassName(); // className declared by parent <Level>
+
+	return <Level hClassName={hClassName + "__with-bem-syntax"}>...</Level>;
+}
+
+<Level hClassName="heading">
+	<Nested />
+</Level>;
+// hClassName changed to "heading__with-bem-syntax"
+```
