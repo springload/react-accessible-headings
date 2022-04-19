@@ -1,4 +1,5 @@
 import {
+  createElement,
   createContext,
   useContext,
   DetailedHTMLProps,
@@ -59,7 +60,7 @@ export function H({
 
   // couldn't have JSX syntax, because ts throws
   // "Property 'children' does not exist on type 'IntrinsicAttributes'"
-  return React.createElement(
+  return createElement(
     `h${level}`,
     { className: mergedClassName, ...otherProps },
     children
