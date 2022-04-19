@@ -6,19 +6,7 @@ In order to make accessible web pages the [W3C: WCAG, WAI say](https://www.w3.or
 
 > Skipping heading ranks can be confusing and should be avoided where possible: Make sure that a `<h2>` is not followed directly by an `<h4>`, for example.
 
-So an accessible app **must** have heading levels like this...
-
-- H1
-  - H2
-    - H3
-    - H3
-  - H2
-    - H3
-      - H4
-      - H4
-  - H2
-
-Not like this,
+So an accessible app **must** not have heading levels like this...
 
 - H1
   - H6
@@ -28,6 +16,20 @@ Not like this,
     - H4
     - H4
 - H1
+
+Instead they should look like,
+
+- H1
+  - H2
+    - H3
+    - H3
+  - H2
+    - H3
+      - H4
+      - H4
+  - H2
+
+## Why a React library?
 
 However as developers of React components it's hard to make components match this semantic hierarchy. We typically hardcode heading levels, like an `<h2>`, or an `<h3>`, into a component. This would limit its flexibility and make it harder to adhere to W3C WCAG.
 
@@ -41,7 +43,12 @@ This library is 1 kilobyte (minified and compressed).
 
 ```jsx
 import React from "react";
-import { Level, H } from "react-accessible-headings";
+import { Level, H, setErrorLevel } from "react-accessible-headings";
+
+// by default react-accessible-headings (RAH) is in production mode.
+// by setting 'development' mode RAH will poll the DOM for heading
+// level accessibility errors
+setErrorLevel("development");
 
 export default function () {
   return (
@@ -54,6 +61,27 @@ export default function () {
   );
 }
 ```
+
+### Detecting skipped headings
+
+`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors.
+
+Errors reported are page-wide and not necessarily specific to `react-accessible-headings`.
+
+Enable this by using `setErrorLevel('development')`;
+
+**This only occurs during Development mode, not in Production**.
+
+There are two types of errors that are checked
+
+1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
+2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
+
+An exception will be thrown if any of these errors occur in Development mode. In production mode a `console.error()` will be printed.
+
+Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
+
+The reason this was implemented by polling the DOM, rather than analysing the React VDOM (or something), is because only the real DOM knows the actual heading levels that screen readers will use for accessibility reasons. Pages could include headings outside of React apps that affect the heading level, so this library needs to poll the DOM.
 
 ## API
 
@@ -95,23 +123,6 @@ In **Development** mode an exception will be thrown if `useLevel` resolves to an
 ### `LevelContext` context
 
 The raw React Context. Note that the value may be `undefined` in which case you should infer a level of `1`. No clamping of valid ranges of values occurs.
-
-## Unusual Feature: Detecting skipped headings
-
-`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors.
-
-**This only occurs during Development mode, not in Production**.
-
-There are two types of errors that are checked
-
-1. Whether there are skipped heading levels. Ie, `<h1>` followed by an `<h3>`;
-2. Whether there are multiple `<h1>`s in the page (there should only be a single `<h1>`).
-
-An exception will be thrown if any of these errors occur.
-
-Testing in [Axe](https://www.deque.com/axe/) will also reveal this type of error.
-
-The reason this was implemented by polling the DOM, rather than analysing the React VDOM (or something), is because only the real DOM knows the actual heading levels that screen readers will use for accessibility reasons. Pages could include headings outside of React apps that affect the heading level, so this library needs to poll the real DOM, but only in Development mode.
 
 ## Further reading
 

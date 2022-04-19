@@ -12,6 +12,14 @@ type LevelProps = {
   children: ReactNode;
 };
 
+type ErrorLevel = "production" | "development";
+
+let _errorLevel: ErrorLevel = "production";
+
+export function setErrorLevel(errorLevel: ErrorLevel) {
+  _errorLevel = errorLevel;
+}
+
 export function Level({ children, value }: LevelProps) {
   const contextLevel = useContext(LevelContext);
   const level = levelRange(value !== undefined ? value : contextLevel + 1);
@@ -62,7 +70,9 @@ function checkHeadingLevelsDom() {
 export function checkHeadingLevels(headings: number[]): number[] {
   const badHeadings = getBadHeadings(headings);
   if (badHeadings.length > 0) {
-    const errorMessage = `Invalid heading levels detected: ${badHeadings}`;
+    const errorMessage = `WCAG accessibility issue detected: skipped heading levels ${badHeadings.map(
+      (num) => `h${num}`
+    )}. See https://www.npmjs.com/package/react-accessible-headings#why`;
     if (!isProd()) {
       throw Error(`${errorMessage}${exceptionOnDev}`);
     }
@@ -87,8 +97,7 @@ function getBadHeadings(headings: number[]): number[] {
 }
 
 function isProd() {
-  if (typeof process === undefined) return true;
-  return process && process.env && process.env.NODE_ENV === "production";
+  return _errorLevel === "production";
 }
 
 const exceptionOnDev =
