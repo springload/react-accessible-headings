@@ -43,12 +43,7 @@ This library is 1 kilobyte (minified and compressed).
 
 ```jsx
 import React from "react";
-import { Level, H, setErrorLevel } from "react-accessible-headings";
-
-// by default react-accessible-headings (RAH) is in production mode.
-// by setting 'development' mode RAH will poll the DOM for heading
-// level accessibility errors
-setErrorLevel("development");
+import { Level, H } from "react-accessible-headings";
 
 export default function () {
   return (
@@ -64,13 +59,7 @@ export default function () {
 
 ### Detecting skipped headings
 
-`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors.
-
-Errors reported are page-wide and not necessarily specific to `react-accessible-headings`.
-
-Enable this by using `setErrorLevel('development')`;
-
-**This only occurs during Development mode, not in Production**.
+`react-accessible-headings` tries to encourage correct heading levels by polling the DOM for accessibility errors and printing errors to `console.error`. These errors are page-wide and not necessarily specific to `react-accessible-headings`.
 
 There are two types of errors that are checked
 
