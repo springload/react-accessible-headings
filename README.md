@@ -304,8 +304,7 @@ import { useHClassName, Level } from 'react-accessible-headings';
 
 function Nested() {
   const hClassName = useHClassName(); // className declared by parent <Level>
-
-  return <Level hClassName={hClassName + '__with-bem-syntax'}>...</Level>;
+  return <Level hClassName={`${hClassName}__with-bem-syntax`}>...</Level>;
 }
 
 <Level hClassName="heading">
