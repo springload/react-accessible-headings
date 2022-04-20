@@ -82,9 +82,9 @@ export function useLevel(): number {
   return levelRange(context.level);
 }
 
-export function useHClassName(): string | undefined {
+export function useHClassName(): string {
   const context = useContext(HeadingsContext);
-  return context.hClassName;
+  return context.hClassName || '';
 }
 
 function checkHeadingLevelsDom() {

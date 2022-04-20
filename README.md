@@ -109,9 +109,7 @@ An error will be logged via `console.error` if `useLevel` resolves to an invalid
 
 ### `useHClassName` context hook
 
-If for some reason you'd like to inspect the current `hClassName` value then `useLevel()` which will return a **number** (integer) from 1-6. (see <a href="#examples-uselevel">_Examples: The 'useLevel query' Example_</a> for more).
-
-an error will be logged via `console.error` if `useLevel` resolves to an invalid heading level such as `7` and the value will be clamped from 1-6 (because `7` is an invalid heading level and it would be pointless to use that).
+If for some reason you'd like to inspect the current `hClassName` value, then `useHClassName()` which will return a **string** representing the className of the Heading elements in the current tree (see <a href="#examples-usehclassname">_Examples: The 'useHClassName' Example_</a> for more).
 
 ### `LevelContext` context
 
@@ -270,3 +268,47 @@ which is a more concise way of writing this,
 ```
 
 However `<Level>` will establish a new deeper _heading level_ context whereas `offset` will not.
+
+### The 'hClassName' Example <a id="examples-hclassname" href="#examples-hclassname">#</a>
+
+If you ever need to style multiple headings with css, you might find that your highly composable React code (for a good reason)
+hides the heading selectors from you:
+
+```css
+.card h{???} {
+  margin-top: 2em;
+}
+```
+
+In this case you can set `className` on every `<H>` element and use the class selector in CSS, or as a shorthand you can provide `hClassName` prop to a `<Level>` element, which will set your className on every decendant heading element in the sub-tree:
+
+```jsx
+<Level hClassName="heading">
+  <H>My ClassName is `heading`</H>
+  <H className="custom">My ClassName is `heading custom`</H>
+  <Level>
+    <H>My ClassName is also `heading`</H>
+    <Level hClassName="card-heading">
+      <H>Mine changed to `card-heading`</H>
+    </Level>
+  </Level>
+</Level>
+```
+
+### The 'useHClassName' Example <a id="examples-usehclassname" href="#examples-usehclassname">#</a>
+
+This example shows how you can utilize `useHClassName` to extend `hClassName` instead of overriding it.
+
+```jsx
+import { useHClassName, Level } from 'react-accessible-headings';
+
+function Nested() {
+  const hClassName = useHClassName(); // className declared by parent <Level>
+  return <Level hClassName={`${hClassName}__with-bem-syntax`}>...</Level>;
+}
+
+<Level hClassName="heading">
+  <Nested />
+</Level>;
+// hClassName changed to "heading__with-bem-syntax"
+```
